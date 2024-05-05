@@ -1,6 +1,6 @@
-﻿namespace IdentifierArchiveCore
+﻿namespace StudioIdGames.IdentifierArchiveCore
 {
-    public static class IdentifierArchiveCore
+    public static class Excuter
     {
         public static ActionInfo Excute(ReadOnlySpan<string> args)
         {
@@ -27,6 +27,10 @@
                 Commands.SETTING => new Setting().Excute(args[1..]) ?? new ActionInfo()
                 {
                     Message = "Setting success."
+                },
+                Commands.INIT=> new Init().Excute(args[1..]) ?? new ActionInfo()
+                {
+                    Message = "Init success."
                 },
                 _ => new ActionInfo()
                 {

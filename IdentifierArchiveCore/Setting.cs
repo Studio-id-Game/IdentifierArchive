@@ -1,39 +1,16 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using Utf8Json;
+using StudioIdGames.IdentifierArchiveCore.Files;
 
-namespace IdentifierArchiveCore
+namespace StudioIdGames.IdentifierArchiveCore
 {
     public sealed class Setting : ActionBase
     {
         static class SubCommands
         {
-            public const string CREATE= "create";
+            public const string CREATE = "create";
             public const string READ = "read";
-        }
-
-        public struct SettingData
-        {
-            public static SettingData FromBytes(byte[] bytes)
-            {
-                return JsonSerializer.Deserialize<SettingData>(bytes);
-            }
-
-            public SettingData()
-            {
-            }
-
-            public string WorkSpace { get; set; } = "作業フォルダ";
-            public string ZipCommand { get; set; } = "暗号圧縮コマンド";
-            public string UnzipCommand { get; set; } = "復号解凍コマンド";
-            public string UploadCommand { get; set; } = "アップロードコマンド";
-            public string DownloadCommand { get; set; } = "ダウンロードコマンド";
-
-            readonly public byte[] ToBytes()
-            {
-                return JsonSerializer.PrettyPrintByteArray(JsonSerializer.Serialize(this));
-            }
-
         }
 
         public override string Command => Commands.SETTING;
@@ -52,12 +29,11 @@ namespace IdentifierArchiveCore
             var subCommnad = args[0];
             var directoryPath = args[1];
             var directoryInfo = new DirectoryInfo(directoryPath);
-            var fileInfo = new FileInfo($"{directoryInfo.FullName}/identifierArchive.settings.json");
 
             return subCommnad switch
             {
-                SubCommands.CREATE => Cteate(directoryInfo, fileInfo),
-                SubCommands.READ => Read(directoryInfo, fileInfo),
+                SubCommands.CREATE => Cteate(directoryInfo),
+                SubCommands.READ => Read(directoryInfo),
                 _ => new ActionInfo()
                 {
                     IsError = true,
@@ -66,7 +42,7 @@ namespace IdentifierArchiveCore
             };
         }
 
-        private static ActionInfo Cteate(DirectoryInfo directoryInfo, FileInfo fileInfo)
+        public static ActionInfo Cteate(DirectoryInfo directoryInfo)
         {
             if (!directoryInfo.Exists)
             {
@@ -77,27 +53,11 @@ namespace IdentifierArchiveCore
                 };
             }
 
+            var fileInfo = new FileInfo($"{directoryInfo.FullName}/{SettingsFile.FileName}");
+
             if (!fileInfo.Exists)
             {
-                File.WriteAllBytes(fileInfo.FullName, new SettingData().ToBytes());
-            }
-
-            var identifierFileInfo = new FileInfo($"{directoryInfo.FullName}/.identifier");
-            if (!identifierFileInfo.Exists)
-            {
-                File.WriteAllText(identifierFileInfo.FullName, "identifier");
-            }
-
-            var currentIdentifierFileInfo = new FileInfo($"{directoryInfo.FullName}/current.identifier");
-            if (!currentIdentifierFileInfo.Exists)
-            {
-                File.WriteAllText(currentIdentifierFileInfo.FullName, "current identifier");
-            }
-
-            var ignoreFileInfo = new FileInfo($"{directoryInfo.FullName}/.gitignore");
-            if (!ignoreFileInfo.Exists)
-            {
-                File.WriteAllText(ignoreFileInfo.FullName, "*\n!.gitignore\n!.identifier");
+                File.WriteAllBytes(fileInfo.FullName, SettingsFile.DefaultValue);
             }
 
             return new ActionInfo()
@@ -106,7 +66,7 @@ namespace IdentifierArchiveCore
             };
         }
 
-        private static ActionInfo Read(DirectoryInfo directoryInfo, FileInfo fileInfo)
+        public static ActionInfo Read(DirectoryInfo directoryInfo)
         {
             if (!directoryInfo.Exists)
             {
@@ -117,7 +77,19 @@ namespace IdentifierArchiveCore
                 };
             }
 
-            if (!fileInfo.Exists)
+            var fileInfo = new FileInfo($"{directoryInfo.FullName}/{SettingsFile.FileName}");
+
+            if (fileInfo.Exists)
+            {
+                var text = File.ReadAllBytes(fileInfo.FullName);
+                var data = SettingsFile.FromBytes(text);
+
+                return new ActionInfo()
+                {
+                    Message = $"Settings : \n{JsonSerializer.PrettyPrint(data.ToBytes())}\n",
+                };
+            }
+            else
             {
                 return new ActionInfo()
                 {
@@ -126,13 +98,6 @@ namespace IdentifierArchiveCore
                 };
             }
 
-            var text = File.ReadAllBytes(fileInfo.FullName);
-            var data = SettingData.FromBytes(text);
-
-            return new ActionInfo()
-            {
-                Message = $"Settings : \n{JsonSerializer.PrettyPrint(data.ToBytes())}\n",
-            };
         }
 
     }
