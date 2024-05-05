@@ -60,6 +60,13 @@ namespace StudioIdGames.IdentifierArchiveCore
                 File.WriteAllBytes(fileInfo.FullName, SettingsFile.DefaultValue);
             }
 
+            var keyFileInfo = new FileInfo($"{directoryInfo.FullName}/{LocalKeyFile.FileName}");
+
+            if (!keyFileInfo.Exists)
+            {
+                File.WriteAllBytes(keyFileInfo.FullName, LocalKeyFile.DefaultValue);
+            }
+
             return new ActionInfo()
             {
                 Message = $"Setting file is created. ({fileInfo.FullName})"

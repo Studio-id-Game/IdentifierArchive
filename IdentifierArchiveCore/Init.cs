@@ -20,6 +20,15 @@ namespace StudioIdGames.IdentifierArchiveCore
             var directoryPath = args[0];
             var directoryInfo = new DirectoryInfo(directoryPath);
 
+            if (!directoryInfo.Exists)
+            {
+                return new ActionInfo()
+                {
+                    IsError = true,
+                    Message = $"Target Directory が見つかりません。({directoryInfo.FullName})"
+                };
+            }
+
             var identifierFileInfo = new FileInfo($"{directoryInfo.FullName}/{IdentifierFile.ArchiveFileName}");
             if (!identifierFileInfo.Exists)
             {
