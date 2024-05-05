@@ -1,4 +1,4 @@
-﻿namespace IdentifierArchiveCore
+﻿namespace StudioIdGames.IdentifierArchiveCore
 {
     public sealed class Push : ActionBase
     {

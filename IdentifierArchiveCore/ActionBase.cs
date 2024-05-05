@@ -1,4 +1,4 @@
-﻿namespace IdentifierArchiveCore
+﻿namespace StudioIdGames.IdentifierArchiveCore
 {
     public abstract class ActionBase
     {
