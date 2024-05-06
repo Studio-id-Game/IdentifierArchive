@@ -2,11 +2,14 @@
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Google.Apis.Upload;
+using File = Google.Apis.Drive.v3.Data.File;
 
 namespace StudioIdGames.GoogleDriveStrage
 {
     internal class Program
     {
+        const string MimeTypeGoogleDriveFolder = "application/vnd.google-apps.folder";
+
         private static void Main(string[] args)
         {
             if(args.Length == 0) 
@@ -33,22 +36,24 @@ namespace StudioIdGames.GoogleDriveStrage
 
         private static void Upload(ReadOnlySpan<string> args)
         {
-            if (args.Length < 3)
+            if (args.Length < 4)
             {
                 Console.WriteLine("Unkown Command.");
                 return;
             }
 
-            var strageRootFolderID = args[0];
-            var subFolderName = args[1];
-            var filePath = args[2];
+
+            var localKeyPath = args[0];
+            var strageRootFolderID = args[1];
+            var subFolderName = args[2];
+            var filePath = args[3];
 
             string[] scopes = [DriveService.Scope.Drive];
 
             GoogleCredential credential;
             try
             {
-                credential = GoogleCredential.FromFile("GoogleDriveStrageLocalKey~").CreateScoped(scopes);
+                credential = GoogleCredential.FromFile(localKeyPath).CreateScoped(scopes);
             }
             catch
             {
@@ -64,31 +69,82 @@ namespace StudioIdGames.GoogleDriveStrage
 
             DriveService service = new(init);
 
-            using FileStream fsu = new(filePath, FileMode.Open);
+            var listRequest = service.Files.List();
+            listRequest.Q = $"'{strageRootFolderID}' in parents and mimeType='{MimeTypeGoogleDriveFolder}' and name='{subFolderName}' and trashed=false";
+
+            IList<File> list;
             try
             {
-                var list = service.Files.List().Execute();
-                foreach ( var file in list.Files)
+                list = listRequest.Execute().Files;
+            }
+            catch (Exception)
+            {
+                list = [];
+            }
+
+            if(list.Count == 0)
+            {
+                try
                 {
-                    if (file.Parents.Contains(rootFolderID))
+                    Console.WriteLine($"Create {subFolderName} folder");
+                    list = [CreateFolder(strageRootFolderID, subFolderName)];
+                }
+                catch (Exception)
+                {
+                    list = [];
+                }
+            }
+
+            Console.WriteLine($"Upload to {subFolderName} folder ({list.Count})");
+            foreach (var folder in list)
+            {
+                using FileStream file = new(filePath, FileMode.Open);
+
+                CreateOrUpdateFile(folder.Id, Path.GetFileName(filePath), file);
+            }
+
+            File CreateFolder(string parentID, string name)
+            {
+                var fobj = new File
+                {
+                    Name = name,
+                    MimeType = MimeTypeGoogleDriveFolder,
+                    Parents = [parentID]
+                };
+
+                FilesResource.CreateRequest req = service.Files.Create(fobj);
+                req.Fields = "id, name";
+                return req.Execute();
+            }
+
+            void CreateOrUpdateFile(string parentID, string fileName, FileStream file)
+            {
+                var listRequest = service.Files.List();
+                listRequest.Q = $"'{parentID}' in parents and name='{fileName}' and trashed=false";
+
+                File meta = new()
+                {
+                    Name = fileName,
+                    Parents = [parentID],
+                };
+
+                var list = listRequest.Execute().Files;
+                if (list == null || list.Count == 0)
+                {
+                    var req = service.Files.Create(meta, file, null);
+                    req.Fields = "id, name";
+                    req.Upload();
+                }
+                else
+                {
+                    Console.WriteLine($"UPDATE MODE");
+                    foreach (var item in list)
                     {
-                        file.
+                        var req = service.Files.Update(meta, item.Id, file, null);
+                        req.Fields = "id, name";
+                        req.Upload();
                     }
                 }
-
-                Google.Apis.Drive.v3.Data.File meta = new()
-                {
-                    Name = Path.GetFileName(filePath),
-                    Parents = [folderID],
-                    
-                };
-                var req = service.Files.Create(meta, fsu, null);
-                req.Fields = "id, name";
-                req.Upload();
-            }
-            finally
-            {
-                fsu.Close();
             }
         }
 
@@ -96,5 +152,6 @@ namespace StudioIdGames.GoogleDriveStrage
         {
 
         }
+
     }
 }
