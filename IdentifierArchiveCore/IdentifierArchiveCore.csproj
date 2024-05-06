@@ -14,4 +14,7 @@
     <PackageReference Include="Utf8Json" Version="1.3.7" />
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	<Exec Command="xcopy &quot;$(ProjectDir)\ThirdPartyNotices&quot; &quot;$(TargetDir)\ThirdPartyNotices&quot; /S /I /E /Y&#xD;&#xA;xcopy &quot;$(TargetDir)&quot; &quot;$(ProjectDir)\..\bin\CombinedTest\$(Configuration)&quot; /S /I /E /Y" />
+  </Target>
 </Project>

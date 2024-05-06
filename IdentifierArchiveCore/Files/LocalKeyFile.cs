@@ -10,7 +10,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
         }
         public static byte[] DefaultValue { get; } = new Data().ToBytes();
 
-        public const string FileName = ".localkey~";
+        public const string FileName = "identifierArchiveSettings.localkey~";
 
         public class Data
         {

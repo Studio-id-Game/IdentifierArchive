@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Command="xcopy &quot;$(ProjectDir)\ThirdPartyNotices&quot; &quot;$(TargetDir)\ThirdPartyNotices&quot; /S /I /E /Y&#xD;&#xA;xcopy &quot;$(TargetDir)&quot; &quot;$(ProjectDir)\..\bin\CombinedTest\$(Configuration)&quot; /S /I /E /Y" />
+	  <Exec Command="xcopy $(ProjectDir)\ThirdPartyNotices\ $(TargetDir) /Y&#xD;&#xA;xcopy $(TargetDir) &quot;$(ProjectDir)\..\bin\CombinedTest\$(Configuration)&quot; /Y" />
   </Target>
 
 </Project>

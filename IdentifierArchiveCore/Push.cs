@@ -1,22 +1,25 @@
 ﻿using StudioIdGames.IdentifierArchiveCore.Files;
 using System.Diagnostics;
 using System.IO;
-using System.Text.RegularExpressions;
 
 namespace StudioIdGames.IdentifierArchiveCore
 {
-    public sealed partial class Push : ActionBase
+    public sealed class Push : ActionBase
     {
         public override string Command => Commands.PUSH;
 
         public override ActionInfo? Excute(ReadOnlySpan<string> args)
         {
-            var initRes = new Init().Excute(args[1..]);
+            var settingsFilePath = args[0];
+            var targetName = args[1];
+            var customIdentifier = args.Length > 2 ? Utility.FixIdentifier(args[2], 0) : null;
+            var initRes = new Init().Excute(args);
 
             if (initRes != null && initRes.IsError)
             {
                 return initRes;
             }
+
 
             if (args.Length < 2)
             {
@@ -27,7 +30,6 @@ namespace StudioIdGames.IdentifierArchiveCore
                 };
             }
 
-            var settingsFilePath = args[0];
             var settingFileInfo = new FileInfo($"{settingsFilePath}/{SettingsFile.FileName}");
             if (!settingFileInfo.Exists)
             {
@@ -39,28 +41,14 @@ namespace StudioIdGames.IdentifierArchiveCore
             }
 
             var setting = SettingsFile.FromBytes(File.ReadAllBytes(settingFileInfo.FullName));
+            var targetPath = $"{setting.TargetBasePath.TrimEnd('/', '\\')}/{targetName}";
 
             var localKeyFileInfo = new FileInfo($"{settingsFilePath}/{LocalKeyFile.FileName}");
-            var targetName = args[1];
-            var targetPath = $"{setting.TargetBasePath.TrimEnd('/', '\\')}/{targetName}";
             var targetDirectoryInfo = new DirectoryInfo(targetPath);
-
-            if (!targetDirectoryInfo.Exists)
-            {
-                return new ActionInfo()
-                {
-                    IsError = true,
-                    Message = $"Target Directory が見つかりません。({targetDirectoryInfo.FullName})"
-                };
-            }
-
             var identifierFileInfo = new FileInfo($"{targetDirectoryInfo.FullName}/{IdentifierFile.ArchiveFileName}");
             var currentIdentifierFileInfo = new FileInfo($"{targetDirectoryInfo.FullName}/{IdentifierFile.CurrentFileName}");
-            var newIdentifier = args.Length > 2 ? FixIdentifier(args[2], 0) : FixIdentifier(File.ReadAllText(identifierFileInfo.FullName), 1);
-            
-            File.WriteAllText(identifierFileInfo.FullName, newIdentifier);
-            File.WriteAllText(currentIdentifierFileInfo.FullName, newIdentifier);
 
+            var newIdentifier = customIdentifier ?? Utility.FixIdentifier(File.ReadAllText(identifierFileInfo.FullName), 1);
             LocalKeyFile.Data? localKey = null;
             if (localKeyFileInfo.Exists)
             {
@@ -70,77 +58,56 @@ namespace StudioIdGames.IdentifierArchiveCore
             setting.SetEnvironment(
                 targetName: targetName,
                 identifier: newIdentifier,
+                settingsPath: $"{settingFileInfo.Directory!.FullName}/{Path.GetFileNameWithoutExtension(settingFileInfo.FullName)}",
                 localKey: localKey);
 
             var zipFileInfo = new FileInfo(setting.ZipPath);
             var zipFileFolderDirectoryInfo = zipFileInfo.Directory!;
-            var zipIgnoreFileInfo = new FileInfo(zipFileFolderDirectoryInfo.FullName + "/.gitignore");
             if (!zipFileFolderDirectoryInfo.Exists)
             {
                 zipFileFolderDirectoryInfo.Create();
             }
 
+            var zipIgnoreFileInfo = new FileInfo(zipFileFolderDirectoryInfo.FullName + "/.gitignore");
             if (!zipIgnoreFileInfo.Exists)
             {
                 File.WriteAllText(
                 zipIgnoreFileInfo.FullName, "*" + zipFileInfo.Extension);
             }
 
-            
+            var resZip = Utility.ExcuteCommand(setting.ZipCommand);
 
-            ProcessStartInfo process_start_info = new()
+            if(resZip != 0)
             {
-                FileName = "cmd",
-                Arguments = "/c " + setting.ZipCommand,
-                CreateNoWindow = true,
-                UseShellExecute = false,
-                RedirectStandardOutput = true
-            };
-
-            Process? process = Process.Start(process_start_info);
-            if (process != null)
-            {
-                string res = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
-                process.Close();
-                Console.WriteLine(res);
+                return new ActionInfo()
+                {
+                    IsError = true,
+                    Message = "Zip command is bad."
+                };
             }
 
-            Console.WriteLine(setting.UploadCommand);
-            Console.WriteLine(setting.DownloadCommand);
+            Console.WriteLine("Zip command is completed.");
+
+            var resUpload = Utility.ExcuteCommand(setting.UploadCommand);
+
+            if (resUpload != 0)
+            {
+                return new ActionInfo()
+                {
+                    IsError = true,
+                    Message = "Upload command is bad."
+                };
+            }
+
+            Console.WriteLine("Upload command is completed.");
+
+            File.WriteAllText(identifierFileInfo.FullName, newIdentifier);
+            File.WriteAllText(currentIdentifierFileInfo.FullName, newIdentifier);
+
+            Console.WriteLine("Identifier file is updated.");
 
             return null;
         }
 
-        static string FixIdentifier(string identifier, int add)
-        {
-            // 正規表現を使って文字列の末尾にある数字を検出
-            var regex = FindNumRegex();
-            var match = regex.Match(identifier);
-
-            if (match.Success)
-            {
-                // 末尾にある数字を取得
-                string numberString = match.Value;
-
-                // 数字を整数に変換してインクリメント
-                int number = int.Parse(numberString);
-                number+= add;
-
-                // インクリメントした数字を5桁に0詰めしてフォーマット
-                string newNumberString = number.ToString("D5");
-
-                // 末尾の数字を新しい数字に置き換える
-                return string.Concat(identifier.AsSpan(0, match.Index), newNumberString);
-            }
-            else
-            {
-                // 末尾に "_00000" を追加
-                return identifier + "_00000";
-            }
-        }
-
-        [GeneratedRegex(@"(\d+)$")]
-        private static partial Regex FindNumRegex();
     }
 }

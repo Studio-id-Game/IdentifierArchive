@@ -4,6 +4,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
 {
     public static class SettingsFile
     {
+        public const string SETTINGS_PATH = "%SETTINGS_PATH%";
         public const string TARGET_PATH = "%TARGET_PATH%";
         public const string TARGET_NAME = "%TARGET_NAME%";
         public const string IDENTIFIER = "%IDENTIFIER%";
@@ -21,19 +22,19 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
 
         public class Data
         {
-            public string TargetBasePath { get; set; } = "";
-            public string ZipPath { get; set; } = $"{TARGET_PATH}.identifierArchive/{IDENTIFIER}.7z";
+            public string TargetBasePath { get; set; } = "./";
+            public string ZipPath { get; set; } = $"{TARGET_PATH}.ZipArchives~/{IDENTIFIER}.7z";
             public string ZipCommand { get; set; } = $"C:\\Program Files\\7-Zip\\7z.exe a -uq0 -p%MyPassWord% -xr!*.identifier {ZIP_PATH} {TARGET_PATH}";
-            public string UnzipCommand { get; set; } = $"C:\\Program Files\\7-Zip\\7z.exe x -p%MyPassWord% {ZIP_PATH}";
-            public string UploadCommand { get; set; } = "";
-            public string DownloadCommand { get; set; } = "";
+            public string UnzipCommand { get; set; } = $"C:\\Program Files\\7-Zip\\7z.exe x -p%MyPassWord% {ZIP_PATH} -o{TARGET_PATH}";
+            public string UploadCommand { get; set; } = $"\"GoogleDriveStrage.exe\" u {SETTINGS_PATH}.localkeygdrive~ %GoogleDriveStrage.RootFolderID% {TARGET_NAME} {ZIP_PATH}";
+            public string DownloadCommand { get; set; } = $"\"GoogleDriveStrage.exe\" d {SETTINGS_PATH}.localkeygdrive~ %GoogleDriveStrage.RootFolderID% {TARGET_NAME} {ZIP_PATH}";
 
             public byte[] ToBytes()
             {
                 return JsonSerializer.PrettyPrintByteArray(JsonSerializer.Serialize(this));
             }
 
-            public void SetEnvironment(string? targetName = null, string? identifier = null, LocalKeyFile.Data? localKey = null)
+            public void SetEnvironment(string? targetName = null, string? identifier = null, string? settingsPath = null, LocalKeyFile.Data? localKey = null)
             {
                 if (localKey != null)
                 {
@@ -42,6 +43,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
                         Replace(key.Key, key.Value);
                     }
                 }
+                Replace(SETTINGS_PATH, settingsPath);
                 Replace(TARGET_PATH, new DirectoryInfo($"{TargetBasePath.TrimEnd('/', '\\')}/{targetName}").FullName);
                 Replace(TARGET_NAME, targetName);
                 Replace(IDENTIFIER, identifier);
