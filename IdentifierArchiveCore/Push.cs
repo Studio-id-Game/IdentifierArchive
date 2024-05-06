@@ -29,12 +29,6 @@ namespace StudioIdGames.IdentifierArchiveCore
 
             var settingsFilePath = args[0];
             var settingFileInfo = new FileInfo($"{settingsFilePath}/{SettingsFile.FileName}");
-            var localKeyFileInfo = new FileInfo($"{settingsFilePath}/{LocalKeyFile.FileName}");
-            var targetPath = args[1];
-            var targetDirectoryInfo = new DirectoryInfo(targetPath);
-            var identifierFileInfo = new FileInfo($"{targetDirectoryInfo.FullName}/{IdentifierFile.ArchiveFileName}");
-            var currentIdentifierFileInfo = new FileInfo($"{targetDirectoryInfo.FullName}/{IdentifierFile.CurrentFileName}");
-
             if (!settingFileInfo.Exists)
             {
                 return new ActionInfo()
@@ -44,6 +38,28 @@ namespace StudioIdGames.IdentifierArchiveCore
                 };
             }
 
+            var setting = SettingsFile.FromBytes(File.ReadAllBytes(settingFileInfo.FullName));
+
+            var localKeyFileInfo = new FileInfo($"{settingsFilePath}/{LocalKeyFile.FileName}");
+            var targetName = args[1];
+            var targetPath = $"{setting.TargetBasePath.TrimEnd('/', '\\')}/{targetName}";
+            var targetDirectoryInfo = new DirectoryInfo(targetPath);
+
+            if (!targetDirectoryInfo.Exists)
+            {
+                return new ActionInfo()
+                {
+                    IsError = true,
+                    Message = $"Target Directory が見つかりません。({targetDirectoryInfo.FullName})"
+                };
+            }
+
+            var identifierFileInfo = new FileInfo($"{targetDirectoryInfo.FullName}/{IdentifierFile.ArchiveFileName}");
+            var currentIdentifierFileInfo = new FileInfo($"{targetDirectoryInfo.FullName}/{IdentifierFile.CurrentFileName}");
+            var newIdentifier = args.Length > 2 ? FixIdentifier(args[2], 0) : FixIdentifier(File.ReadAllText(identifierFileInfo.FullName), 1);
+            
+            File.WriteAllText(identifierFileInfo.FullName, newIdentifier);
+            File.WriteAllText(currentIdentifierFileInfo.FullName, newIdentifier);
 
             LocalKeyFile.Data? localKey = null;
             if (localKeyFileInfo.Exists)
@@ -51,24 +67,26 @@ namespace StudioIdGames.IdentifierArchiveCore
                 localKey = LocalKeyFile.FromBytes(File.ReadAllBytes(localKeyFileInfo.FullName));
             }
 
-
-            var newIdentifier = args.Length > 2 ? FixIdentifier(args[2], 0) : FixIdentifier(File.ReadAllText(identifierFileInfo.FullName), 1);
-            File.WriteAllText(identifierFileInfo.FullName, newIdentifier);
-            File.WriteAllText(currentIdentifierFileInfo.FullName, newIdentifier);
-
-            var setting = SettingsFile.FromBytes(File.ReadAllBytes(settingFileInfo.FullName));
-
-            setting.SetEnvironment(targetPath: targetDirectoryInfo.FullName,
-                targetName: targetDirectoryInfo.Name,
+            setting.SetEnvironment(
+                targetName: targetName,
                 identifier: newIdentifier,
                 localKey: localKey);
 
-            var workSpaceDirectoryInfo = new DirectoryInfo(setting.WorkSpace);
-
-            if (!workSpaceDirectoryInfo.Exists)
+            var zipFileInfo = new FileInfo(setting.ZipPath);
+            var zipFileFolderDirectoryInfo = zipFileInfo.Directory!;
+            var zipIgnoreFileInfo = new FileInfo(zipFileFolderDirectoryInfo.FullName + "/.gitignore");
+            if (!zipFileFolderDirectoryInfo.Exists)
             {
-                workSpaceDirectoryInfo.Create();
+                zipFileFolderDirectoryInfo.Create();
             }
+
+            if (!zipIgnoreFileInfo.Exists)
+            {
+                File.WriteAllText(
+                zipIgnoreFileInfo.FullName, "*" + zipFileInfo.Extension);
+            }
+
+            
 
             ProcessStartInfo process_start_info = new()
             {
@@ -87,6 +105,9 @@ namespace StudioIdGames.IdentifierArchiveCore
                 process.Close();
                 Console.WriteLine(res);
             }
+
+            Console.WriteLine(setting.UploadCommand);
+            Console.WriteLine(setting.DownloadCommand);
 
             return null;
         }

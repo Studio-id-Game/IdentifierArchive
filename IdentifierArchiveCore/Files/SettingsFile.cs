@@ -21,8 +21,8 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
 
         public class Data
         {
-            public string WorkSpace { get; set; } = $"{TARGET_PATH}.identifierArchive/";
-            public string ZipPath { get; set; } = $"{WORK_SPACE}/{IDENTIFIER}.7z";
+            public string TargetBasePath { get; set; } = "";
+            public string ZipPath { get; set; } = $"{TARGET_PATH}.identifierArchive/{IDENTIFIER}.7z";
             public string ZipCommand { get; set; } = $"C:\\Program Files\\7-Zip\\7z.exe a -uq0 -p%MyPassWord% -xr!*.identifier {ZIP_PATH} {TARGET_PATH}";
             public string UnzipCommand { get; set; } = $"C:\\Program Files\\7-Zip\\7z.exe x -p%MyPassWord% {ZIP_PATH}";
             public string UploadCommand { get; set; } = "";
@@ -33,7 +33,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
                 return JsonSerializer.PrettyPrintByteArray(JsonSerializer.Serialize(this));
             }
 
-            public void SetEnvironment(string? targetPath = null, string? targetName = null, string? identifier = null, LocalKeyFile.Data? localKey = null)
+            public void SetEnvironment(string? targetName = null, string? identifier = null, LocalKeyFile.Data? localKey = null)
             {
                 if (localKey != null)
                 {
@@ -42,10 +42,9 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
                         Replace(key.Key, key.Value);
                     }
                 }
-                Replace(TARGET_PATH, targetPath);
+                Replace(TARGET_PATH, new DirectoryInfo($"{TargetBasePath.TrimEnd('/', '\\')}/{targetName}").FullName);
                 Replace(TARGET_NAME, targetName);
                 Replace(IDENTIFIER, identifier);
-                Replace(WORK_SPACE, new DirectoryInfo(WorkSpace).FullName);
                 Replace(ZIP_PATH, new DirectoryInfo(ZipPath).FullName);
             }
 
@@ -53,7 +52,6 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
             {
                 if (value != null)
                 {
-                    WorkSpace = WorkSpace.Replace(var, value);
                     ZipPath = ZipPath.Replace(var, value);
                     ZipCommand = ZipCommand.Replace(var, value);
                     UnzipCommand = UnzipCommand.Replace(var, value);

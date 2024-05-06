@@ -5,8 +5,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>StudioIdGames.$(MSBuildProjectName.Replace(" ", "_"))</AssemblyName>
-    <RootNamespace>$(AssemblyName)</RootNamespace>
+    <AssemblyName>$(MSBuildProjectName.Replace(" ", "_"))</AssemblyName>
+    <RootNamespace>StudioIdGames.$(AssemblyName)</RootNamespace>
     <Authors>StudioIdGames</Authors>
     <Company>StudioIdGames</Company>
   </PropertyGroup>
