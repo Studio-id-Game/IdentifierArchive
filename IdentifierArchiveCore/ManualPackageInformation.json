@@ -1,0 +1,19 @@
+[
+  {
+    "PackageName": "Utf8Json",
+    "PackageVersion": "1.3.7",
+    "PackageUrl": "https://github.com/neuecc/Utf8Json/",
+    "Copyright": "Copyright (c) 2017 Yoshifumi Kawai",
+    "Authors": [
+      "neuecc"
+    ],
+    "Description": "Definitely Fastest and Zero Allocation JSON Serializer for C#(NET, .NET Core, Unity, Xamarin).",
+    "LicenseUrl": "https://github.com/neuecc/Utf8Json/blob/master/LICENSE",
+    "LicenseType": "MIT",
+    "Repository": {
+      "Type": "git",
+      "Url": "https://github.com/neuecc/Utf8Json/",
+      "Commit": ""
+    }
+  }
+]
