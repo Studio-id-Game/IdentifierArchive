@@ -1,18 +1,50 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <AssemblyName>StudioIdGames.$(MSBuildProjectName.Replace(" ", "_"))</AssemblyName>
-    <RootNamespace>$(AssemblyName)</RootNamespace>
-    <Authors>StudioIdGames</Authors>
-    <Company>StudioIdGames</Company>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AssemblyName>$(MSBuildProjectName.Replace(" ", "_"))</AssemblyName>
+		<RootNamespace>StudioIdGames.$(AssemblyName)</RootNamespace>
+		<Authors>StudioIdGames</Authors>
+		<Company>StudioIdGames</Company>
+		<SignAssembly>False</SignAssembly>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<Copyright>Copyright (c) 2024 Studio id Games</Copyright>
+		<PackageProjectUrl>https://github.com/Studio-id-Game/IdentifierArchive</PackageProjectUrl>
+		<Title>$(AssemblyName)</Title>
+		<PackageId>StudioIdGames.$(AssemblyName)</PackageId>
+		<RepositoryUrl>https://github.com/Studio-id-Game/IdentifierArchive</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\IdentifierArchiveCore\IdentifierArchiveCore.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\IdentifierArchiveCore\IdentifierArchiveCore.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="ThirdPartyNotices\LICENSE_Utf8Json.txt">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="xcopy &quot;$(ProjectDir)\ThirdPartyNotices&quot; &quot;$(TargetDir)\ThirdPartyNotices&quot; /S /I /E /Y&#xD;&#xA;xcopy &quot;$(TargetDir)&quot; &quot;$(ProjectDir)\..\bin\CombinedTest\$(Configuration)&quot; /S /I /E /Y" />
+	</Target>
 
 </Project>

@@ -1,0 +1,27 @@
+{
+  "Targets": [
+    {
+      "ProjectDirectory": ".\\..\\..\\DevTools.LicenseHunter\\",
+      "ExportPath": ".\\..\\..\\DevTools.LicenseHunter\\",
+      "ManualPackageInformationPath": ".\\..\\..\\DevTools.LicenseHunter\\ManualPackageInformation.json"
+    },
+    {
+      "ProjectDirectory": ".\\..\\..\\GoogleDriveStrage\\",
+      "ExportPath": ".\\..\\..\\GoogleDriveStrage\\",
+      "ManualPackageInformationPath": ".\\..\\..\\GoogleDriveStrage\\ManualPackageInformation.json"
+    },
+    {
+      "ProjectDirectory": ".\\..\\..\\IdentifierArchive\\",
+      "ExportPath": ".\\..\\..\\IdentifierArchive\\",
+      "ManualPackageInformationPath": ".\\..\\..\\IdentifierArchive\\ManualPackageInformation.json"
+    },
+    {
+      "ProjectDirectory": ".\\..\\..\\IdentifierArchiveCore\\",
+      "ExportPath": ".\\..\\..\\IdentifierArchiveCore\\",
+      "ManualPackageInformationPath": ".\\..\\..\\IdentifierArchiveCore\\ManualPackageInformation.json"
+    }
+  ],
+  "IgnoreLicenseType": [
+    "MS-EULA"
+  ]
+}
