@@ -19,7 +19,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
         /// <summary>
         /// 保安上隠蔽したいファイルを配置するためのフォルダを表す絶対パス
         /// </summary>
-        public string LocalkeyFolderAbsolute { get; private set; } = $"D:/LocalKeys~/ProjectName/{TARGET_FOLDER.Path}";
+        public string LocalkeyFolderAbsolute { get; private set; } = $"D:/LocalKeys~/ProjectName";
 
         /// <summary>
         /// %TARGET_FOLDER% と 識別子 %IDENTIFIER% に対応する圧縮ファイルを表す、%SETTINGS_FILE_PARENT% からの相対ファイルパス
