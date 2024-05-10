@@ -48,20 +48,11 @@ namespace StudioIdGames.IdentifierArchiveCore
             var folderInfo = new DirectoryInfo(folderPath);
             if (!folderInfo.Exists)
             {
-                Console.WriteLine($"Folder is not Exists. ({folderInfo.FullName})\nCreate new folder? (Y|N)");
-                var key = Console.ReadKey();
-                if(key.Key == ConsoleKey.Y)
+                return new ActionInfo()
                 {
-                    folderInfo.Create();
-                }
-                else
-                {
-                    return new ActionInfo()
-                    {
-                        IsError = true,
-                        Message = $"Folder is not created."
-                    };
-                }
+                    IsError = true,
+                    Message = $"$\"Folder is not Exists. ({{folderInfo.FullName}})"
+                };
             }
 
             var fileInfo = new FileInfo($"{folderInfo.FullName}/{SettingsFile.FileName}");
@@ -77,7 +68,7 @@ namespace StudioIdGames.IdentifierArchiveCore
             {
                 if (SettingsFile.CreateDefaultFile(fileInfo))
                 {
-                    var sampleKeyFileInfo = new FileInfo($"{folderInfo.FullName}/SampleLocalKey.{LocalKeyFile.FileName}");
+                    var sampleKeyFileInfo = new FileInfo($"{folderInfo.FullName}/{LocalKeyFile.FileName}");
                     LocalKeyFile.CreateDefaultFile(sampleKeyFileInfo);
 
                     return new ActionInfo()
@@ -120,6 +111,7 @@ namespace StudioIdGames.IdentifierArchiveCore
                 Console.WriteLine($"Settings : \n{JsonSerializer.PrettyPrint(settings.ToBytes())}\n");
                 Console.WriteLine($"Settings with PathIdentity: \n{JsonSerializer.PrettyPrint(controller.Settings.ToBytes())}\n");
                 Console.WriteLine($"LocalkeyFiles : \n\t{string.Join("\n\t", localkeyFilePaths)}\n");
+
                 return new ActionInfo()
                 {
                     Message = "File is exists.",

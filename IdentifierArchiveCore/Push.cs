@@ -32,7 +32,7 @@ namespace StudioIdGames.IdentifierArchiveCore
                 return fileCheck;
             }
 
-            controller.CreateInitFiles();
+            controller.SetupTargetFolder();
 
             var newIdentifier = customIdentifier ?? Utility.FixIdentifier(TextFile.FromFile(controller.IdentifierFileInfo)!, 1);
 
@@ -46,22 +46,12 @@ namespace StudioIdGames.IdentifierArchiveCore
                 };
             }
 
-            if (!controller.ZipFolderInfo.Exists)
-            {
-                controller.ZipFolderInfo.Create();
-            }
+            controller.SetupZipFolder();
 
-            var zipIgnoreFileInfo = new FileInfo($"{controller.ZipFolderInfo.FullName}/{GitIgnoreFile.FileName}");
-            if (!zipIgnoreFileInfo.Exists)
-            {
-                TextFile.ToFile(zipIgnoreFileInfo, $"*{zipIgnoreFileInfo.Extension}");
-            }
+            Console.WriteLine("\nInitialized folders.\nExcute zip command.\n");
 
-            Console.WriteLine();
-            Console.WriteLine("Initialized folders.");
-            Console.WriteLine();
-            Console.WriteLine("Excute zip command.\n");
             var resZip = controller.ExcuteZip();
+
             Console.WriteLine();
 
             if (resZip != 0)
@@ -73,10 +63,10 @@ namespace StudioIdGames.IdentifierArchiveCore
                 };
             }
 
-            Console.WriteLine("Zip command is completed.\n");
+            Console.WriteLine("Zip command is completed.\nExcute upload command.\n");
 
-            Console.WriteLine("\nExcute upload command.\n");
             var resUpload = controller.ExcuteUpload();
+
             Console.WriteLine();
 
 

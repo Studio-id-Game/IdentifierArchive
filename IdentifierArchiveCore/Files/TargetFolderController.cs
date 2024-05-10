@@ -61,7 +61,7 @@
             return null;
         }
 
-        public void CreateInitFiles()
+        public void SetupTargetFolder()
         {
             if (!IdentifierFileInfo.Exists)
             {
@@ -76,6 +76,20 @@
             if (!TargetGitIgnoreFileInfo.Exists)
             {
                 GitIgnoreFile.ToFileInTargetFolder(TargetGitIgnoreFileInfo);
+            }
+        }
+
+        public void SetupZipFolder()
+        {
+            if (!ZipFolderInfo.Exists)
+            {
+                ZipFolderInfo.Create();
+            }
+
+            var zipIgnoreFileInfo = new FileInfo($"{ZipFolderInfo.FullName}/{GitIgnoreFile.FileName}");
+            if (!zipIgnoreFileInfo.Exists)
+            {
+                TextFile.ToFile(zipIgnoreFileInfo, $"*\n!{GitIgnoreFile.FileName}");
             }
         }
 

@@ -28,7 +28,7 @@ namespace StudioIdGames.IdentifierArchiveCore
                 return fileCheck;
             }
 
-            controller.CreateInitFiles();
+            controller.SetupTargetFolder();
 
             return null;
         }
