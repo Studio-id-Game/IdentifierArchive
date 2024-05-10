@@ -19,7 +19,7 @@ namespace StudioIdGames.IdentifierArchiveCore
 
         public override ActionInfo? Excute(ReadOnlySpan<string> args)
         {
-            if (args.Length < 1)
+            if (args.Length < 2)
             {
                 return new ActionInfo()
                 {
