@@ -33,7 +33,7 @@ namespace StudioIdGames.IdentifierArchiveCore
                     while (!process.StandardError.EndOfStream)
                     {
                         string? line = process.StandardError.ReadLine();
-                        Console.Error.WriteLine(line);
+                        Console.WriteLine(line);
                     }
 
                     process.WaitForExit();
@@ -78,5 +78,13 @@ namespace StudioIdGames.IdentifierArchiveCore
 
         [GeneratedRegex(@"(\d+)$")]
         private static partial Regex FindNumRegex();
+
+        public static void ConsoleDeleteLine()
+        {
+            int prePos = Console.CursorLeft;//現在カーソル位置を取得
+            Console.SetCursorPosition(0, Console.CursorTop);
+            Console.Write("".PadRight(prePos));//前のカーソル位置まで空白埋めする
+            Console.SetCursorPosition(0, Console.CursorTop);
+        }
     }
 }

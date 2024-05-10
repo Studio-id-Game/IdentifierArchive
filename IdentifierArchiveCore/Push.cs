@@ -1,6 +1,7 @@
 ﻿using StudioIdGames.IdentifierArchiveCore.Files;
 using System.Diagnostics;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
 
 namespace StudioIdGames.IdentifierArchiveCore
 {
@@ -10,17 +11,6 @@ namespace StudioIdGames.IdentifierArchiveCore
 
         public override ActionInfo? Excute(ReadOnlySpan<string> args)
         {
-            var settingsFilePath = args[0];
-            var targetName = args[1];
-            var customIdentifier = args.Length > 2 ? Utility.FixIdentifier(args[2], 0) : null;
-            var initRes = new Init().Excute(args);
-
-            if (initRes != null && initRes.IsError)
-            {
-                return initRes;
-            }
-
-
             if (args.Length < 2)
             {
                 return new ActionInfo()
@@ -30,54 +20,41 @@ namespace StudioIdGames.IdentifierArchiveCore
                 };
             }
 
-            var settingFileInfo = new FileInfo($"{settingsFilePath}/{SettingsFile.FileName}");
-            if (!settingFileInfo.Exists)
+            var settingsFolderPath = args[0];
+            var targetFolderPath = args[1];
+            var customIdentifier = args.Length > 2 ? Utility.FixIdentifier(args[2], 0) : null;
+
+            TargetFolderController controller = new(settingsFolderPath, targetFolderPath);
+
+            var fileCheck = controller.CheckSettingsFileAndTargetFolder();
+            if (fileCheck != null)
+            {
+                return fileCheck;
+            }
+
+            controller.SetupTargetFolder();
+
+            var newIdentifier = customIdentifier ?? Utility.FixIdentifier(TextFile.FromFile(controller.IdentifierFileInfo)!, 1);
+
+
+            if (controller.TryLoad(newIdentifier))
             {
                 return new ActionInfo()
                 {
                     IsError = true,
-                    Message = $"Settings File が見つかりません。({settingFileInfo.FullName})"
+                    Message = "Can not load settings file."
                 };
             }
 
-            var setting = SettingsFile.FromBytes(File.ReadAllBytes(settingFileInfo.FullName));
-            var targetPath = $"{setting.TargetBasePath.TrimEnd('/', '\\')}/{targetName}";
+            controller.SetupZipFolder();
 
-            var localKeyFileInfo = new FileInfo($"{settingsFilePath}/{LocalKeyFile.FileName}");
-            var targetDirectoryInfo = new DirectoryInfo(targetPath);
-            var identifierFileInfo = new FileInfo($"{targetDirectoryInfo.FullName}/{IdentifierFile.ArchiveFileName}");
-            var currentIdentifierFileInfo = new FileInfo($"{targetDirectoryInfo.FullName}/{IdentifierFile.CurrentFileName}");
+            Console.WriteLine("\nInitialized folders.\nExcute zip command.\n");
 
-            var newIdentifier = customIdentifier ?? Utility.FixIdentifier(File.ReadAllText(identifierFileInfo.FullName), 1);
-            LocalKeyFile.Data? localKey = null;
-            if (localKeyFileInfo.Exists)
-            {
-                localKey = LocalKeyFile.FromBytes(File.ReadAllBytes(localKeyFileInfo.FullName));
-            }
+            var resZip = controller.ExcuteZip();
 
-            setting.SetEnvironment(
-                targetName: targetName,
-                identifier: newIdentifier,
-                settingsPath: $"{settingFileInfo.Directory!.FullName}/{Path.GetFileNameWithoutExtension(settingFileInfo.FullName)}",
-                localKey: localKey);
+            Console.WriteLine();
 
-            var zipFileInfo = new FileInfo(setting.ZipPath);
-            var zipFileFolderDirectoryInfo = zipFileInfo.Directory!;
-            if (!zipFileFolderDirectoryInfo.Exists)
-            {
-                zipFileFolderDirectoryInfo.Create();
-            }
-
-            var zipIgnoreFileInfo = new FileInfo(zipFileFolderDirectoryInfo.FullName + "/.gitignore");
-            if (!zipIgnoreFileInfo.Exists)
-            {
-                File.WriteAllText(
-                zipIgnoreFileInfo.FullName, "*" + zipFileInfo.Extension);
-            }
-
-            var resZip = Utility.ExcuteCommand(setting.ZipCommand);
-
-            if(resZip != 0)
+            if (resZip != 0)
             {
                 return new ActionInfo()
                 {
@@ -86,9 +63,12 @@ namespace StudioIdGames.IdentifierArchiveCore
                 };
             }
 
-            Console.WriteLine("Zip command is completed.");
+            Console.WriteLine("Zip command is completed.\nExcute upload command.\n");
 
-            var resUpload = Utility.ExcuteCommand(setting.UploadCommand);
+            var resUpload = controller.ExcuteUpload();
+
+            Console.WriteLine();
+
 
             if (resUpload != 0)
             {
@@ -99,12 +79,12 @@ namespace StudioIdGames.IdentifierArchiveCore
                 };
             }
 
-            Console.WriteLine("Upload command is completed.");
+            Console.WriteLine("Upload command is completed.\n");
 
-            File.WriteAllText(identifierFileInfo.FullName, newIdentifier);
-            File.WriteAllText(currentIdentifierFileInfo.FullName, newIdentifier);
+            TextFile.ToFile(controller.IdentifierFileInfo, newIdentifier);
+            TextFile.ToFile(controller.CurrentIdentifierFileInfo, newIdentifier);
 
-            Console.WriteLine("Identifier file is updated.");
+            Console.WriteLine("Identifier file is updated.\n");
 
             return null;
         }
