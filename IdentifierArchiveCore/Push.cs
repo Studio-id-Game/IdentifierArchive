@@ -39,11 +39,16 @@ namespace StudioIdGames.IdentifierArchiveCore
 
             if (controller.TryLoad(newIdentifier))
             {
-                if (!controller.ZipFolderInfo.Exists)
+                return new ActionInfo()
                 {
-                    controller.ZipFolderInfo.Create();
-                }
+                    IsError = true,
+                    Message = "Can not load settings file."
+                };
+            }
 
+            if (!controller.ZipFolderInfo.Exists)
+            {
+                controller.ZipFolderInfo.Create();
             }
 
             var zipIgnoreFileInfo = new FileInfo($"{controller.ZipFolderInfo.FullName}/{GitIgnoreFile.FileName}");
