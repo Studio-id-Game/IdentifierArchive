@@ -5,7 +5,7 @@
     /// </summary>
     /// <param name="settingsFolderPath">実行ファイルから見た SettingsFile のあるフォルダーの場所</param>
     /// <param name="targetFolderPath">SettingsFile から見た ターゲットフォルダーの場所</param>
-    public class TargetFolderController(string settingsFolderPath, string? targetFolderPath)
+    public class TargetFolderController(string settingsFolderPath, string targetFolderPath)
     {
         /// <summary>
         /// 実行ファイルから見た SettingsFile の場所
@@ -15,7 +15,7 @@
         /// <summary>
         /// SettingsFile から見た ターゲットフォルダーの場所
         /// </summary>
-        public string? TargetFolderPath { get; } = targetFolderPath;
+        public string TargetFolderPath { get; } = targetFolderPath;
 
         public SettingsFile Settings { get; private set; } = new();
 
@@ -27,7 +27,8 @@
 
         public FileInfo LocalkeyFileInfo => new($"{Settings.LocalkeyFolderAbsolute}/{LocalKeyFile.FileName}");
 
-        public PathIdentityInfo<FileInfo> ZipFileInfo => new(new(Settings.ZipFile), SettingsFolderInfo);
+        public FileInfo ZipFileInfo => new(Settings.ZipFile);
+        public DirectoryInfo ZipFolderInfo => ZipFileInfo.Directory!;
 
         public PathIdentityInfo<DirectoryInfo> TargetFolderInfo => new(new($"{SettingsFolderPath}/{TargetFolderPath}"), SettingsFolderInfo);
 
@@ -35,13 +36,56 @@
 
         public FileInfo CurrentIdentifierFileInfo => new($"{SettingsFolderPath}/{TargetFolderPath}/{IdentifierFile.CurrentFileName}");
 
+        public FileInfo TargetGitIgnoreFileInfo => new($"{SettingsFolderPath}/{TargetFolderPath}/{GitIgnoreFile.FileName}");
+
+        public ActionInfo? CheckSettingsFileAndTargetFolder()
+        {
+            if (!SettingsFileInfo.Exists)
+            {
+                return new ActionInfo()
+                {
+                    IsError = true,
+                    Message = $"Settings File が見つかりません。({SettingsFileInfo.FullName})"
+                };
+            }
+
+            if (!TargetFolderInfo.Info.Exists)
+            {
+                return new ActionInfo()
+                {
+                    IsError = true,
+                    Message = $"Target Folder が見つかりません。({TargetFolderInfo.Info.FullName})"
+                };
+            }
+
+            return null;
+        }
+
+        public void CreateInitFiles()
+        {
+            if (!IdentifierFileInfo.Exists)
+            {
+                IdentifierFile.ToFile(IdentifierFileInfo);
+            }
+
+            if (!CurrentIdentifierFileInfo.Exists)
+            {
+                IdentifierFile.ToFile(CurrentIdentifierFileInfo);
+            }
+
+            if (!TargetGitIgnoreFileInfo.Exists)
+            {
+                GitIgnoreFile.ToFileInTargetFolder(TargetGitIgnoreFileInfo);
+            }
+        }
+
         /// <summary>
         /// 設定ファイルを読み込み、可能であれば環境変数を適用します。
         /// </summary>
         /// <param name="targetFolderPath">SettingsFile から見た ターゲットフォルダーの場所</param>
         /// <param name="identifier">ターゲットとする識別子</param>
         /// <returns></returns>
-        public bool TryLoad(string identifier)
+        public bool TryLoad(string identifier, bool ignoreLocalkey = false)
         {
             bool res = false;
             var settings = SettingsFile.FromFile(SettingsFileInfo);
@@ -55,15 +99,19 @@
             Settings.Replace(SettingsFile.TARGET_FOLDER, TargetFolderInfo);
             Settings.Replace(SettingsFile.SETTINGS_FOLDER_ABS, SettingsFolderInfo.FullName);
             Settings.Replace(SettingsFile.SETTINGS_FILE_ABS, SettingsFileInfo.FullName);
+            Settings.Replace(SettingsFile.ZIP_FILE_ABS, ZipFileInfo.FullName);
+            Settings.Replace(SettingsFile.ZIP_FOLDER_ABS, ZipFolderInfo.FullName);
             Settings.Replace(SettingsFile.LOCALKEY_FOLDER_ABS, LocalkeyFolderInfo.FullName);
-            Settings.Replace(SettingsFile.ZIP_FILE, ZipFileInfo);
 
-            var localkeyFile = LocalKeyFile.FromFile(LocalkeyFileInfo);
-            if (localkeyFile != null)
+            if (!ignoreLocalkey)
             {
-                foreach (var item in localkeyFile.KeySet)
+                var localkeyFile = LocalKeyFile.FromFile(LocalkeyFileInfo);
+                if (localkeyFile != null)
                 {
-                    Settings.Replace(item.Key, item.Value);
+                    foreach (var item in localkeyFile.KeySet)
+                    {
+                        Settings.Replace(item.Key, item.Value);
+                    }
                 }
             }
 

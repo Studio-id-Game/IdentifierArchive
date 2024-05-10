@@ -25,15 +25,8 @@
         {
             try
             {
-                if (fileInfo.Exists)
-                {
-                    File.WriteAllText(fileInfo.FullName, value);
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                File.WriteAllText(fileInfo.FullName, value);
+                return true;
             }
             catch (Exception)
             {

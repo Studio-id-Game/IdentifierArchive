@@ -18,8 +18,9 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
             {
                 return JsonSerializer.Deserialize<Self>(bytes);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 return null;
             }
         }
@@ -36,8 +37,9 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
 
                 return null;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 return null;
             }
         }
@@ -46,17 +48,22 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
         {
             try
             {
-                return JsonSerializer.PrettyPrintByteArray(JsonSerializer.Serialize(this));
+                return JsonSerializer.PrettyPrintByteArray(JsonSerializer.Serialize((Self)this));
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
                 return null;
             }
         }
 
         public bool ToFile(FileInfo? fileInfo)
         {
-            if (fileInfo?.Exists ?? false)
+            if (fileInfo == null)
+            {
+                Console.WriteLine("FileInfo is null");
+            }
+            else
             {
                 var bytes = ToBytes();
                 if (bytes != null)
@@ -64,10 +71,11 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
                     try
                     {
                         File.WriteAllBytes(fileInfo.FullName, bytes);
+                        return true;
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
-                        return false;
+                        Console.WriteLine(e.Message);
                     }
                 }
             }

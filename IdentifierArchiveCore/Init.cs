@@ -17,49 +17,18 @@ namespace StudioIdGames.IdentifierArchiveCore
                 };
             }
 
-            var settingsFilePath = args[0];
-            var settingFileInfo = new FileInfo($"{settingsFilePath}/{SettingsFile.FileName}");
-            if (!settingFileInfo.Exists)
-            {
-                return new ActionInfo()
-                {
-                    IsError = true,
-                    Message = $"Settings File が見つかりません。({settingFileInfo.FullName})"
-                };
-            }
-            
-            var setting = SettingsFile.FromBytes(File.ReadAllBytes(settingFileInfo.FullName));
+            var settingsFolderPath = args[0];
+            var targetFolderPath = args[1];
 
-            var targetName = args[1];
-            var targetPath = $"{setting.TargetBasePath.TrimEnd('/', '\\')}/{targetName}";
-            var targetDirectoryInfo = new DirectoryInfo(targetPath);
+            TargetFolderController controller = new(settingsFolderPath, targetFolderPath);
 
-            if (!targetDirectoryInfo.Exists)
+            var fileCheck = controller.CheckSettingsFileAndTargetFolder();
+            if(fileCheck != null)
             {
-                return new ActionInfo()
-                {
-                    IsError = true,
-                    Message = $"Target Directory が見つかりません。({targetDirectoryInfo.FullName})"
-                };
+                return fileCheck;
             }
 
-            var identifierFileInfo = new FileInfo($"{targetDirectoryInfo.FullName}/{IdentifierFile.ArchiveFileName}");
-            if (!identifierFileInfo.Exists)
-            {
-                File.WriteAllText(identifierFileInfo.FullName, IdentifierFile.DefaultValue);
-            }
-
-            var currentIdentifierFileInfo = new FileInfo($"{targetDirectoryInfo.FullName}/{IdentifierFile.CurrentFileName}");
-            if (!currentIdentifierFileInfo.Exists)
-            {
-                File.WriteAllText(currentIdentifierFileInfo.FullName, IdentifierFile.DefaultValue);
-            }
-
-            var ignoreFileInfo = new FileInfo($"{targetDirectoryInfo.FullName}/{GitIgnoreFile.FileName}");
-            if (!ignoreFileInfo.Exists)
-            {
-                File.WriteAllText(ignoreFileInfo.FullName, GitIgnoreFile.ValueInTargetDirectory);
-            }
+            controller.CreateInitFiles();
 
             return null;
         }

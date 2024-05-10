@@ -11,7 +11,8 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
         public static readonly string SETTINGS_FILE_ABS = $"%{nameof(SETTINGS_FILE_ABS)}%";
         public static readonly string SETTINGS_FOLDER_ABS = $"%{nameof(SETTINGS_FOLDER_ABS)}%";
         public static readonly string LOCALKEY_FOLDER_ABS = $"%{nameof(LOCALKEY_FOLDER_ABS)}%";
-        public static readonly PathIdentity ZIP_FILE = new(nameof(ZIP_FILE));
+        public static readonly string ZIP_FILE_ABS = $"%{nameof(ZIP_FILE_ABS)}%";
+        public static readonly string ZIP_FOLDER_ABS = $"%{nameof(ZIP_FOLDER_ABS)}%";
         public static readonly PathIdentity TARGET_FOLDER = new(nameof(TARGET_FOLDER));
 
         public const string FileName = "IdentifierArchiveSettings.json";
@@ -19,32 +20,32 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
         /// <summary>
         /// 保安上隠蔽したいファイルを配置するためのフォルダを表す絶対パス
         /// </summary>
-        public string LocalkeyFolderAbsolute { get; private set; } = $"D:/LocalKeys~/ProjectName";
+        public string LocalkeyFolderAbsolute { get; set; } = $"D:/LocalKeys~/ProjectName";
 
         /// <summary>
         /// %TARGET_FOLDER% と 識別子 %IDENTIFIER% に対応する圧縮ファイルを表す、%SETTINGS_FILE_PARENT% からの相対ファイルパス
         /// </summary>
-        public string ZipFile { get; private set; } = $"{TARGET_FOLDER.Path}.ZipArchives~/{IDENTIFIER}.7z";
+        public string ZipFile { get; set; } = $"{TARGET_FOLDER.Path}.ZipArchives~/{IDENTIFIER}.7z";
 
         /// <summary>
         /// %TARGET_FOLDER_ABS% 内の .identifier ファイル以外を圧縮して %ZIP_FILE_ABS% として保存するコマンド 
         /// </summary>
-        public string ZipCommand { get; private set; } = $"C:\\Program Files\\7-Zip\\7z.exe a -uq0 -p%MyPassWord% -xr!*.identifier {ZIP_FILE.PathAbsolute} {TARGET_FOLDER.PathAbsolute}";
+        public string ZipCommand { get;set; } = $"C:\\Program Files\\7-Zip\\7z.exe a -uq0 -p%MyPassWord% -xr!*.identifier {ZIP_FILE_ABS} {TARGET_FOLDER.PathAbsolute}";
 
         /// <summary>
         /// %ZIP_FILE_ABS% を解凍して %TARGET_FOLDER_ABS% に配置するコマンド 
         /// </summary>
-        public string UnzipCommand { get; private set; } = $"C:\\Program Files\\7-Zip\\7z.exe x -p%MyPassWord% {ZIP_FILE.PathAbsolute} -o{TARGET_FOLDER.PathAbsolute}";
+        public string UnzipCommand { get; set; } = $"C:\\Program Files\\7-Zip\\7z.exe x -p%MyPassWord% {ZIP_FILE_ABS} -o{TARGET_FOLDER.PathAbsolute}";
 
         /// <summary>
         /// %ZIP_FILE_ABS% を、%ZIP_FILE_PARENT% から一意に定まるクラウドストレージにアップロードするコマンド
         /// </summary>
-        public string UploadCommand { get; private set; } = $"\"GoogleDriveStrage.exe\" u {LOCALKEY_FOLDER_ABS}/.gdrivelocalkey~ %GoogleDriveStrage.RootFolderID% {ZIP_FILE.Parent} {ZIP_FILE.PathAbsolute}";
+        public string UploadCommand { get; set; } = $"\"GoogleDriveStrage.exe\" u {LOCALKEY_FOLDER_ABS}/.gdrivelocalkey~ %GoogleDriveStrage.RootFolderID% {ZIP_FOLDER_ABS} {ZIP_FILE_ABS}";
 
         /// <summary>
         /// %ZIP_FILE_ABS% を、%ZIP_FILE_PARENT% から一意に定まるクラウドストレージからダウンロードするコマンド
         /// </summary>
-        public string DownloadCommand { get; private set; } = $"\"GoogleDriveStrage.exe\" d {LOCALKEY_FOLDER_ABS}/.gdrivelocalkey~ %GoogleDriveStrage.RootFolderID% {ZIP_FILE.Parent} {ZIP_FILE.PathAbsolute}";
+        public string DownloadCommand { get;set; } = $"\"GoogleDriveStrage.exe\" d {LOCALKEY_FOLDER_ABS}/.gdrivelocalkey~ %GoogleDriveStrage.RootFolderID% {ZIP_FOLDER_ABS} {ZIP_FILE_ABS}";
 
         public void Replace(string var, string? value)
         {

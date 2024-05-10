@@ -44,7 +44,7 @@ namespace StudioIdGames.GoogleDriveStrage
 
             var localKeyPath = args[0];
             var strageRootFolderID = args[1];
-            var subFolderName = args[2];
+            var subFolderName = args[2].Replace('\\', '/');
             var filePath = args[3];
 
             string[] scopes = [DriveService.Scope.Drive];
@@ -54,8 +54,9 @@ namespace StudioIdGames.GoogleDriveStrage
             {
                 credential = GoogleCredential.FromFile(localKeyPath).CreateScoped(scopes);
             }
-            catch
+            catch (Exception e)
             {
+                Console.WriteLine("Credential Error : " + e.Message);
                 return -1;
             }
 
@@ -69,6 +70,7 @@ namespace StudioIdGames.GoogleDriveStrage
             DriveService service = new(init);
 
             var listRequest = service.Files.List();
+
             listRequest.Q = $"'{strageRootFolderID}' in parents and mimeType='{MimeTypeGoogleDriveFolder}' and name='{subFolderName}' and trashed=false";
 
             IList<File> list;
@@ -76,8 +78,9 @@ namespace StudioIdGames.GoogleDriveStrage
             {
                 list = listRequest.Execute().Files;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine("Get Folder List Error : " + e.Message);
                 return -1;
             }
 
@@ -88,8 +91,9 @@ namespace StudioIdGames.GoogleDriveStrage
                     Console.WriteLine($"Create {subFolderName} folder");
                     list = [CreateFolder(service, strageRootFolderID, subFolderName)];
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Console.WriteLine("Create Folder Error : " + e.Message);
                     return -1;
                 }
             }

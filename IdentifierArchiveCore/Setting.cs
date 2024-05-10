@@ -2,6 +2,8 @@
 using System.Runtime.InteropServices;
 using Utf8Json;
 using StudioIdGames.IdentifierArchiveCore.Files;
+using System.IO;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace StudioIdGames.IdentifierArchiveCore
 {
@@ -17,7 +19,7 @@ namespace StudioIdGames.IdentifierArchiveCore
 
         public override ActionInfo? Excute(ReadOnlySpan<string> args)
         {
-            if (args.Length < 2)
+            if (args.Length < 1)
             {
                 return new ActionInfo()
                 {
@@ -27,13 +29,12 @@ namespace StudioIdGames.IdentifierArchiveCore
             }
 
             var subCommnad = args[0];
-            var directoryPath = args[1];
-            var directoryInfo = new DirectoryInfo(directoryPath);
+            var folderPath = args[1];
 
             return subCommnad switch
             {
-                SubCommands.CREATE => Cteate(directoryInfo),
-                SubCommands.READ => Read(directoryInfo),
+                SubCommands.CREATE => Cteate(folderPath),
+                SubCommands.READ => Read(folderPath),
                 _ => new ActionInfo()
                 {
                     IsError = true,
@@ -42,58 +43,86 @@ namespace StudioIdGames.IdentifierArchiveCore
             };
         }
 
-        public static ActionInfo Cteate(DirectoryInfo directoryInfo)
+        public static ActionInfo Cteate(string folderPath)
         {
-            if (!directoryInfo.Exists)
+            var folderInfo = new DirectoryInfo(folderPath);
+            if (!folderInfo.Exists)
             {
-                return new ActionInfo()
+                Console.WriteLine($"Folder is not Exists. ({folderInfo.FullName})\nCreate new folder? (Y|N)");
+                var key = Console.ReadKey();
+                if(key.Key == ConsoleKey.Y)
                 {
-                    IsError = true,
-                    Message = " Directory is not exists."
-                };
-            }
-
-            var fileInfo = new FileInfo($"{directoryInfo.FullName}/{SettingsFile.FileName}");
-
-            if (!fileInfo.Exists)
-            {
-                File.WriteAllBytes(fileInfo.FullName, SettingsFile.DefaultValue);
-            }
-
-            var keyFileInfo = new FileInfo($"{directoryInfo.FullName}/{LocalKeyFile.FileName}");
-
-            if (!keyFileInfo.Exists)
-            {
-                File.WriteAllBytes(keyFileInfo.FullName, LocalKeyFile.DefaultValue);
-            }
-
-            return new ActionInfo()
-            {
-                Message = $"Setting file is created. ({fileInfo.FullName})"
-            };
-        }
-
-        public static ActionInfo Read(DirectoryInfo directoryInfo)
-        {
-            if (!directoryInfo.Exists)
-            {
-                return new ActionInfo()
+                    folderInfo.Create();
+                }
+                else
                 {
-                    IsError = true,
-                    Message = $" Directory is not exists. ({directoryInfo.FullName})"
-                };
+                    return new ActionInfo()
+                    {
+                        IsError = true,
+                        Message = $"Folder is not created."
+                    };
+                }
             }
 
-            var fileInfo = new FileInfo($"{directoryInfo.FullName}/{SettingsFile.FileName}");
+            var fileInfo = new FileInfo($"{folderInfo.FullName}/{SettingsFile.FileName}");
 
             if (fileInfo.Exists)
             {
-                var text = File.ReadAllBytes(fileInfo.FullName);
-                var data = SettingsFile.FromBytes(text);
-
                 return new ActionInfo()
                 {
-                    Message = $"Settings : \n{JsonSerializer.PrettyPrint(data.ToBytes())}\n",
+                    Message = $"Setting file is exist. ({fileInfo.FullName})"
+                };
+            }
+            else
+            {
+                if (SettingsFile.CreateDefaultFile(fileInfo))
+                {
+                    var sampleKeyFileInfo = new FileInfo($"{folderInfo.FullName}/SampleLocalKey.{LocalKeyFile.FileName}");
+                    LocalKeyFile.CreateDefaultFile(sampleKeyFileInfo);
+
+                    return new ActionInfo()
+                    {
+                        Message = $"Setting file is created. ({fileInfo.FullName})"
+                    };
+                }
+                else
+                {
+                    return new ActionInfo()
+                    {
+                        IsError = true,
+                        Message = $"Can not create setting file. ({fileInfo.FullName})"
+                    };
+                }
+            }
+        }
+
+        public static ActionInfo Read(string folderPath)
+        {
+            var folderInfo = new DirectoryInfo(folderPath);
+            if (!folderInfo.Exists)
+            {
+                return new ActionInfo()
+                {
+                    IsError = true,
+                    Message = $" Directory is not exists. ({folderInfo.FullName})"
+                };
+            }
+
+            var fileInfo = new FileInfo($"{folderInfo.FullName}/{SettingsFile.FileName}");
+            var settings =  SettingsFile.FromFile(fileInfo);
+            if (settings != null)
+            {
+                var localkeyFiles = new DirectoryInfo(settings.LocalkeyFolderAbsolute).GetFiles("*", SearchOption.AllDirectories);
+                var localkeyFilePaths = localkeyFiles.Select(e => Path.GetRelativePath(settings.LocalkeyFolderAbsolute, e.FullName)).ToArray();
+                var controller = new TargetFolderController(folderPath, "/SAMPLE_TARGET/SAMPLE_TARGET_SUBFOLDER/");
+                controller.TryLoad("SAMPLE_IDENTIFIER", true);
+
+                Console.WriteLine($"Settings : \n{JsonSerializer.PrettyPrint(settings.ToBytes())}\n");
+                Console.WriteLine($"Settings with PathIdentity: \n{JsonSerializer.PrettyPrint(controller.Settings.ToBytes())}\n");
+                Console.WriteLine($"LocalkeyFiles : \n\t{string.Join("\n\t", localkeyFilePaths)}\n");
+                return new ActionInfo()
+                {
+                    Message = "File is exists.",
                 };
             }
             else

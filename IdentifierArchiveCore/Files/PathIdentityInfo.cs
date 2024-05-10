@@ -11,8 +11,7 @@
         public PathIdentityInfo(T path, DirectoryInfo basePath)
         {
             Info = path;
-            RelativePath = Path.GetRelativePath(path.FullName, basePath.FullName);
-
+            RelativePath = Path.GetRelativePath(basePath.FullName, path.FullName);
             var parent =
                 path is FileInfo fi ? fi.Directory :
                 path is DirectoryInfo di ? di.Parent :
