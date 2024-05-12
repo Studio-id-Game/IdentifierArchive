@@ -2,6 +2,7 @@
 {
     public class IdentifierFile : TextFile
     {
+        public const string Extension = ".identifier";
         public const string ArchiveFileName = "IdentifierArchive.identifier";
         public const string CurrentFileName = "IdentifierArchiveCurrent.identifier";
         public const string DefaultValue = "DEFAULT_IDENTIFIER";

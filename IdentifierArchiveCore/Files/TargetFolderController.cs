@@ -101,18 +101,22 @@
         /// <returns></returns>
         public bool TryLoad(string identifier, bool ignoreLocalkey = false)
         {
-            bool res = false;
+            bool res;
             var settings = SettingsFile.FromFile(SettingsFileInfo);
-            if (settings != null)
+            if (settings == null)
+            {
+                Console.WriteLine($"Not exist [{SettingsFileInfo.FullName}]");
+                res = false;
+            }
+            else
             {
                 Settings = settings;
                 res = true;
             }
 
+            Settings.ReplaceSettingsFilePath(SettingsFolderPath);
             Settings.Replace(SettingsFile.IDENTIFIER, identifier);
             Settings.Replace(SettingsFile.TARGET_FOLDER, TargetFolderInfo);
-            Settings.Replace(SettingsFile.SETTINGS_FOLDER_ABS, SettingsFolderInfo.FullName);
-            Settings.Replace(SettingsFile.SETTINGS_FILE_ABS, SettingsFileInfo.FullName);
             Settings.Replace(SettingsFile.ZIP_FILE_ABS, ZipFileInfo.FullName);
             Settings.Replace(SettingsFile.ZIP_FOLDER_ABS, ZipFolderInfo.FullName);
             Settings.Replace(SettingsFile.LOCALKEY_FOLDER_ABS, LocalkeyFolderInfo.FullName);

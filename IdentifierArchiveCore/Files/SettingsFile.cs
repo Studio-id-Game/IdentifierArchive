@@ -72,5 +72,14 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
                 DownloadCommand = value.Replace(DownloadCommand, var);
             }
         }
+
+        public void ReplaceSettingsFilePath(string settingsFolderPath)
+        {
+            var settingsFolderInfo = new DirectoryInfo(settingsFolderPath);
+            var settingsFileInfo = new FileInfo($"{settingsFolderPath}/{FileName}");
+
+            Replace(SETTINGS_FOLDER_ABS, settingsFolderInfo.FullName);
+            Replace(SETTINGS_FILE_ABS, settingsFileInfo.FullName);
+        }
     }
 }
