@@ -111,6 +111,53 @@ namespace StudioIdGames.GoogleDriveStrage
 
         private static int Download(ReadOnlySpan<string> args)
         {
+            if (args.Length < 4)
+            {
+                Console.WriteLine("Unkown Command.");
+                return -1;
+            }
+
+
+            var localKeyPath = args[0];
+            var strageRootFolderID = args[1];
+            var subFolderName = args[2].Replace('\\', '/');
+            var filePath = args[3];
+            var fileName = Path.GetFileName(filePath);
+
+            string[] scopes = [DriveService.Scope.Drive];
+
+            GoogleCredential credential;
+            try
+            {
+                credential = GoogleCredential.FromFile(localKeyPath).CreateScoped(scopes);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Credential Error : " + e.Message);
+                return -1;
+            }
+
+
+            BaseClientService.Initializer init = new()
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = "GoogleDriveStrage App"
+            };
+
+            DriveService service = new(init);
+
+            Console.WriteLine($"Search {subFolderName} folder in root folder.");
+            var subFolder = GetFileWithName(service, strageRootFolderID, "root", subFolderName, $"and mimeType='{MimeTypeGoogleDriveFolder}'");
+            if(subFolder == null) return -1;
+
+            Console.WriteLine($"Download [{subFolderName}]->[{fileName}] to {filePath}");
+            var file = GetFileWithName(service, subFolder.Id, subFolderName, fileName);
+            if (file == null) return -1;
+
+            var req = service.Files.Get(file.Id);
+            using var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+            req.Download(fs);
+
             return 0;
         }
 
@@ -156,6 +203,38 @@ namespace StudioIdGames.GoogleDriveStrage
             FilesResource.CreateRequest req = service.Files.Create(fobj);
             req.Fields = "id, name";
             return req.Execute();
+        }
+
+        private static File? GetFileWithName(DriveService service, string parentID, string parentName, string name, string addon = "")
+        {
+            var getFile = service.Files.List();
+            getFile.Q = $"'{parentID}' in parents and name='{name}' and trashed=false {addon}";
+
+            Console.WriteLine($"Search {name} in {parentName} folder.");
+            IList<File> list;
+            try
+            {
+                list = getFile.Execute().Files;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ERROR : " + e.Message);
+                return null;
+            }
+
+            if (list.Count == 0)
+            {
+                Console.WriteLine($"Not exists {name} in {parentName} folder.");
+                return null;
+            }
+
+            if (list.Count >= 2)
+            {
+                Console.WriteLine($"Meny Exists {name} in {parentName} folder : count = {list.Count}");
+                return null;
+            }
+
+            return list[0];
         }
 
     }

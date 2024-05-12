@@ -37,12 +37,12 @@ namespace StudioIdGames.IdentifierArchiveCore
             var newIdentifier = customIdentifier ?? Utility.FixIdentifier(TextFile.FromFile(controller.IdentifierFileInfo)!, 1);
 
 
-            if (controller.TryLoad(newIdentifier))
+            if (!controller.TryLoad(newIdentifier))
             {
                 return new ActionInfo()
                 {
                     IsError = true,
-                    Message = "Can not load settings file."
+                    Message = $"Can not load settings file. : {controller.SettingsFileInfo.FullName}"
                 };
             }
 

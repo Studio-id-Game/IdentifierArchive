@@ -103,6 +103,7 @@ namespace StudioIdGames.IdentifierArchiveCore
             var settings =  SettingsFile.FromFile(fileInfo);
             if (settings != null)
             {
+                settings.ReplaceSettingsFilePath(folderPath);
                 var localkeyFiles = new DirectoryInfo(settings.LocalkeyFolderAbsolute).GetFiles("*", SearchOption.AllDirectories);
                 var localkeyFilePaths = localkeyFiles.Select(e => Path.GetRelativePath(settings.LocalkeyFolderAbsolute, e.FullName)).ToArray();
                 var controller = new TargetFolderController(folderPath, "/SAMPLE_TARGET/SAMPLE_TARGET_SUBFOLDER/");
