@@ -1,6 +1,4 @@
-﻿using Utf8Json;
-
-namespace StudioIdGames.IdentifierArchiveCore.Files
+﻿namespace StudioIdGames.IdentifierArchiveCore.Files
 {
     /// <summary>
     /// 
