@@ -1,4 +1,6 @@
-﻿namespace StudioIdGames.IdentifierArchiveCore.Files
+﻿using Utf8Json;
+
+namespace StudioIdGames.IdentifierArchiveCore.Files
 {
     /// <summary>
     /// 
@@ -115,11 +117,7 @@
             }
 
             Settings.ReplaceSettingsFilePath(SettingsFolderPath);
-            Settings.Replace(SettingsFile.IDENTIFIER, identifier);
             Settings.Replace(SettingsFile.TARGET_FOLDER, TargetFolderInfo);
-            Settings.Replace(SettingsFile.ZIP_FILE_ABS, ZipFileInfo.FullName);
-            Settings.Replace(SettingsFile.ZIP_FOLDER_ABS, ZipFolderInfo.FullName);
-            Settings.Replace(SettingsFile.LOCALKEY_FOLDER_ABS, LocalkeyFolderInfo.FullName);
 
             if (!ignoreLocalkey)
             {
@@ -132,6 +130,11 @@
                     }
                 }
             }
+
+            Settings.Replace(SettingsFile.IDENTIFIER, identifier);
+            Settings.Replace(SettingsFile.LOCALKEY_FOLDER_ABS, LocalkeyFolderInfo.FullName);
+            Settings.Replace(SettingsFile.ZIP_FILE_ABS, ZipFileInfo.FullName);
+            Settings.Replace(SettingsFile.ZIP_FOLDER_ABS, ZipFolderInfo.FullName);
 
             return res;
         }
