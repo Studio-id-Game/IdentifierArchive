@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
+		<VersionPrefix>0.1.0</VersionPrefix>
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -26,10 +27,7 @@
 		<None Include="..\LICENSE">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
-		</None>
-		<None Include="..\README.md">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 
@@ -37,8 +35,14 @@
 		<PackageReference Include="Google.Apis.Drive.v3" Version="1.68.0.3373" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="THIRD_PARTY_NOTICES.txt">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="xcopy &quot;$(ProjectDir)\ThirdPartyNotices&quot; &quot;$(TargetDir)\ThirdPartyNotices&quot; /S /I /E /Y&#xD;&#xA;xcopy &quot;$(TargetDir)&quot; &quot;$(ProjectDir)\..\bin\CombinedTest\$(Configuration)&quot; /S /I /E /Y" />
+		<Exec Command="xcopy &quot;$(TargetDir)&quot; &quot;$(ProjectDir)\..\bin\CombinedTest\$(Configuration)&quot; /S /I /E /Y" />
 	</Target>
 
 </Project>

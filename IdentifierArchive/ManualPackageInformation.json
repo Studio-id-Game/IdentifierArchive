@@ -18,7 +18,7 @@
   },
   {
     "PackageName": "StudioIdGames.IdentifierArchiveCore",
-    "PackageVersion": "1.0.0",
+    "PackageVersion": "0.0.1",
     "PackageUrl": "https://github.com/Studio-id-Game/IdentifierArchive",
     "Copyright": "Copyright (c) 2024 Studio id Games",
     "Authors": [

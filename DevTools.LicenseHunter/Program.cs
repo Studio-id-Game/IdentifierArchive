@@ -122,10 +122,12 @@ namespace StudioIdGames.DevTools.LicenseHunter
                 Console.WriteLine($"Initialize export folder ({ExportDirInfo.FullName})\n");
                 if (ExportDirInfo.Exists)
                 {
+                    /*
                     foreach(var file in ExportDirInfo.GetFiles("*", SearchOption.AllDirectories))
                     {
                         file.Delete();
                     }
+                    */
                 }
                 else
                 {
@@ -166,11 +168,13 @@ namespace StudioIdGames.DevTools.LicenseHunter
                     {
                         if (settingsFile.IgnoreLicenseType.Contains(item.LicenseType))
                         {
+                            /*
                             var licenseFileInfo = new FileInfo($"{LicenseDirectoryInfo.FullName}\\{item.PackageName}_{item.PackageVersion}.txt");
                             if (licenseFileInfo.Exists)
                             {
                                 licenseFileInfo.Delete();
                             }
+                            */
                         }
                         else
                         {
@@ -192,7 +196,6 @@ namespace StudioIdGames.DevTools.LicenseHunter
                         Console.WriteLine("Need Update Licenses.\n");
                         var commandExportLicenseRes = await ExcuteCommandAsync(DotnetProjectLicenses, commandExportLicense);
                         if (commandExportLicenseRes < 0) return -1;
-
 
                         foreach (var item in listJson)
                         {
