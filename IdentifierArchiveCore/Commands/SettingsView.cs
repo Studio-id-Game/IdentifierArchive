@@ -48,7 +48,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
             var localKeyFolderController = new LocalKeyFolderController(settings);
 
-            var localKeyFileNames = localKeyFolderController.GetLocalKeyFileNames();
+            var localKeyFileNames = localKeyFolderController.GetAllFilesName();
 
             if (localKeyFileNames == null)
             {

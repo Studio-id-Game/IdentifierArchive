@@ -18,5 +18,32 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
         {
             return ConsoleUtility.CheckFolder(FolderInfo, ScreenName);
         }
+
+
+        public FileInfo[]? GetAllFiles()
+        {
+            if (!CheckFolder())
+            {
+                return null;
+            }
+
+            return FolderInfo.GetFiles("*", SearchOption.AllDirectories);
+        }
+
+        public string[]? GetAllFilesName(string relativeTo)
+        {
+            var files = GetAllFiles();
+            if (files == null)
+            {
+                return null;
+            }
+
+            return files.Select(e => Path.GetRelativePath(relativeTo, e.FullName)).ToArray();
+        }
+
+        public string[]? GetAllFilesName()
+        {
+            return GetAllFilesName(FolderInfo.FullName);
+        }
     }
 }

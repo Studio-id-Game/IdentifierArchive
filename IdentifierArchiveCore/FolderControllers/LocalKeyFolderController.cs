@@ -23,16 +23,5 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
         {
             return new LocalKeyFile().FromFile(FolderInfo);
         }
-
-        public string[]? GetLocalKeyFileNames()
-        {
-            if (!CheckFolder())
-            {
-                return null;
-            }
-
-            var localkeyFiles = FolderInfo.GetFiles("*", SearchOption.AllDirectories);
-            return localkeyFiles?.Select(e => Path.GetRelativePath(settings.LocalkeyFolderAbsolute, e.FullName)).ToArray();
-        }
     }
 }
