@@ -4,11 +4,9 @@ namespace StudioIdGames.IdentifierArchive
 {
     internal class Program
     {
-        private static void Main(string[] args)
+        private static int Main(string[] args)
         {
-            var info = Excuter.Excute(args);
-
-            Console.WriteLine(info.IsError ? $"ERROR : {info.Message}" : info.Message);
+            return Excuter.Excute(args);
         }
     }
 }
