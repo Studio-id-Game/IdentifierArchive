@@ -17,16 +17,25 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
 
         public override bool FolderSetup(CommandArgs args)
         {
-            return base.FolderSetup(args) && IdentifierFileSetup();
+            return base.FolderSetup(args) && IdentifierFileSetup(args);
         }
 
-        private bool IdentifierFileSetup()
+        private bool IdentifierFileSetup(CommandArgs args)
         {
-            bool res = new IdentifierFile(IdentifierFileType.Archive).ToFile(FolderInfo, out var created, out _, autoCreate: true, autoOverwrite: false) || created;
+            var archive = GetArchiveIdentifier(false)!;
+            var current = GetCurrentIdentifier(false)!;
+
+            if (!string.IsNullOrWhiteSpace(args.Identifier))
+            {
+                archive.Text = args.Identifier;
+                current.Text = args.Identifier;
+            }
+
+            bool res = archive.ToFile(FolderInfo, out var created, out _, autoCreate: true, autoOverwrite: false) || created;
             
             if (!res) return false;
 
-            res = new IdentifierFile(IdentifierFileType.Archive).ToFile(FolderInfo, out created, out _, autoCreate: true, autoOverwrite: false) || created;
+            res = current.ToFile(FolderInfo, out created, out _, autoCreate: true, autoOverwrite: false) || created;
             
             if (!res) return false;
 
@@ -35,6 +44,18 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
             if (!res) return false;
 
             return true;
+        }
+
+        public IdentifierFile? GetArchiveIdentifier(bool loading)
+        {
+            var archive = new IdentifierFile(IdentifierFileType.Archive);
+            return loading ? archive.FromFile(FolderInfo) : archive;
+        }
+
+        public IdentifierFile? GetCurrentIdentifier(bool loading)
+        {
+            var archive = new IdentifierFile(IdentifierFileType.Current);
+            return loading ? archive.FromFile(FolderInfo) : archive;
         }
     }
 }
