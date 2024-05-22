@@ -1,4 +1,4 @@
-﻿namespace StudioIdGames.IdentifierArchiveCore.Files
+﻿namespace StudioIdGames.IdentifierArchiveCore
 {
     public class PathIdentityInfo<T> where T : FileSystemInfo
     {
