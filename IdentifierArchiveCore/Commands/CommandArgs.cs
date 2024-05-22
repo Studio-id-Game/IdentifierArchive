@@ -115,7 +115,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             return true;
         }
 
-        public bool CheckRequire(ICommandAction master, bool targetFolder = false, bool settingsFodler = false, bool identifier = false)
+        public bool CheckRequire(CommandAction master, bool targetFolder = false, bool settingsFodler = false, bool identifier = false)
         {
             List<string> needs = [];
 
@@ -155,6 +155,15 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 AutoFileOverwrite = AutoFileOverwrite, 
                 AutoFolderCreate = AutoFolderCreate, 
             };
+        }
+
+        public override string ToString()
+        {
+            return $"{SettingsFolderArgName}={SettingsFolder}" +
+                $" {TargetFolderArgName}={TargetFolder}" +
+                $" {IdentifierArgName}={Identifier}" +
+                $" {AutoFolderCreateArgName}={AutoFolderCreate}" +
+                $" {AutoFileOverwriteArgName}={AutoFileOverwrite}";
         }
     }
 }
