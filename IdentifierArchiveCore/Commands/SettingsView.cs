@@ -4,18 +4,20 @@ using Utf8Json;
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
-    public readonly struct SettingsView : ICommandAction
+    public class SettingsView : CommandAction
     {
-        public const string CommandID = "sv";
+        public static SettingsView Instance { get; } = new SettingsView();
 
-        public const string Name = "Settings-View";
+        private SettingsView() { }
 
-        string ICommandAction.CommandID => CommandID;
+        public override string CommandID => "sv";
 
-        string ICommandAction.Name => Name;
+        public override string Name => "Settings-View";
 
-        public int Excute(CommandArgs args)
+        public override int Excute(CommandArgs args)
         {
+            base.Excute(args);
+
             if (!args.CheckRequire(this, settingsFodler: true))
             {
                 return -1;

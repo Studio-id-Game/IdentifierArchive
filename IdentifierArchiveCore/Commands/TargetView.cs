@@ -2,18 +2,20 @@
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
-    public class TargetView : ICommandAction
+    public class TargetView : CommandAction
     {
-        public const string CommandID = "tv";
+        public static TargetView Instance { get; } = new TargetView();
 
-        public const string Name = "Target-View";
+        private TargetView() { }
 
-        string ICommandAction.CommandID => CommandID;
+        public override string CommandID => "tv";
 
-        string ICommandAction.Name => Name;
+        public override string Name => "Target-View";
 
-        public int Excute(CommandArgs args)
+        public override int Excute(CommandArgs args)
         {
+            base.Excute(args);
+
             if (!args.CheckRequire(this, settingsFodler: true, targetFolder: true))
             {
                 return -1;

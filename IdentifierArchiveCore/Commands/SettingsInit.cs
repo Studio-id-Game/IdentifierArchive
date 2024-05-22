@@ -3,18 +3,20 @@ using StudioIdGames.IdentifierArchiveCore.FolderControllers;
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
-    public readonly struct SettingsInit : ICommandAction
+    public class SettingsInit : CommandAction
     {
-        public const string CommandID = "si";
+        public static SettingsInit Instance { get; } = new SettingsInit();
 
-        public const string Name = "Settings-Init";
+        private SettingsInit() { }
 
-        string ICommandAction.CommandID => CommandID;
+        public override string CommandID => "si";
 
-        string ICommandAction.Name => Name;
+        public override string Name => "Settings-Init";
 
-        public int Excute(CommandArgs args)
+        public override int Excute(CommandArgs args)
         {
+            base.Excute(args);
+
             if (!args.CheckRequire(this, settingsFodler: true))
             {
                 return -1;

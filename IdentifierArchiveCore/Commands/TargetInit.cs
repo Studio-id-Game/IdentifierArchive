@@ -2,18 +2,20 @@
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
-    public class TargetInit : ICommandAction
+    public class TargetInit : CommandAction
     {
-        public const string CommandID = "ti";
+        public static TargetInit Instance { get; } = new TargetInit();
 
-        public const string Name = "Target-Init";
+        private TargetInit() { }
 
-        string ICommandAction.CommandID => CommandID;
+        public override string CommandID => "ti";
 
-        string ICommandAction.Name => Name;
+        public override string Name => "Target-Init";
 
-        public int Excute(CommandArgs args)
+        public override int Excute(CommandArgs args)
         {
+            base.Excute(args);
+
             if (!args.CheckRequire(this, settingsFodler: true, targetFolder: true))
             {
                 return -1;

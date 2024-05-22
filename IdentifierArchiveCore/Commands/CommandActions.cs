@@ -3,17 +3,17 @@ using System.Collections.ObjectModel;
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
-    public class CommandActions : ICommandAction
+    public class CommandActions : CommandAction
     {
-        private static readonly Dictionary<string, ICommandAction> definedActions;
+        private static readonly Dictionary<string, CommandAction> definedActions;
 
         static CommandActions()
         {
             definedActions = [];
-            AddCommand(new SettingsInit());
-            AddCommand(new SettingsView());
-            AddCommand(new TargetInit());
-            AddCommand(new TargetView());
+            AddCommand(SettingsInit.Instance);
+            AddCommand(SettingsView.Instance);
+            AddCommand(TargetInit.Instance);
+            AddCommand(TargetView.Instance);
             AddCommand(new ZipAdd());
             AddCommand(new ZipExtract());
             AddCommand(new ZipCacheClear());
@@ -22,7 +22,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             AddCommand(new RemoteDownload());
         }
 
-        public static void AddCommand<T>(T action) where T : ICommandAction
+        public static void AddCommand<T>(T action) where T : CommandAction
         {
             definedActions.Add(action.Name, action);
         }
@@ -45,16 +45,17 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             return lastRes;
         }
 
-        ICommandAction[] actions = [];
+        CommandAction[] actions = [];
 
-        public ReadOnlySpan<ICommandAction> Actions => actions;
+        public ReadOnlySpan<CommandAction> Actions => actions;
 
-        public string CommandID => string.Join(' ', actions.Select(e => e.CommandID));
+        public override string CommandID => string.Join(' ', actions.Select(e => e.CommandID));
 
-        public string Name => $"[{string.Join(", ", actions.Select(e => e.Name))}]";
+        public override string Name => $"[{string.Join(", ", actions.Select(e => e.Name))}]";
 
-        public int Excute(CommandArgs args)
+        public override int Excute(CommandArgs args)
         {
+            base.Equals(args);
             for (int i = 0; i < Actions.Length; i++)
             {
                 var action = Actions[i];
@@ -71,11 +72,11 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
         public bool TryRead(ReadOnlySpan<string> args, out ReadOnlySpan<string> next)
         {
-            List<ICommandAction> newActions = [];
+            List<CommandAction> newActions = [];
             for (var i = 0; i < args.Length; i++)
             {
                 var arg = args[i];
-                if (definedActions.TryGetValue(arg, out ICommandAction? action) && action != null)
+                if (definedActions.TryGetValue(arg, out CommandAction? action) && action != null)
                 {
                     newActions.Add(action);
                 }
