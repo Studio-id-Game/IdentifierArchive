@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿using StudioIdGames.IdentifierArchiveCore.Files;
+using System.Diagnostics;
+using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace StudioIdGames.IdentifierArchiveCore
 {
@@ -55,10 +58,20 @@ namespace StudioIdGames.IdentifierArchiveCore
             {
                 while (true)
                 {
-                    Console.WriteLine($"{text} (y|n)");
+                    Console.Write($"{text} (y|n) > ");
                     var key = Console.ReadKey().Key;
-                    if (key == ConsoleKey.Y) return true;
-                    if (key == ConsoleKey.N) return false;
+                    if (key == ConsoleKey.Y)
+                    {
+                        Console.WriteLine("\n");
+                        return true;
+                    }
+                    if (key == ConsoleKey.N)
+                    {
+                        Console.WriteLine("\n");
+                        return false;
+                    }
+
+                    DeleteLine();
                 }
             }
         }
@@ -72,21 +85,35 @@ namespace StudioIdGames.IdentifierArchiveCore
         {
             overwrited = false;
             var exists = CheckFileSystem(info, $"{screenName} file", out created, autoCreate, onCreate);
-            if (exists && (autoOverwrite != false))
+            if (exists)
             {
-                if(Question($"Overwrite old {screenName} file?", autoOverwrite))
+                if (autoOverwrite == false)
                 {
-                    try
+                    Console.WriteLine($"{screenName} file is already exists. ({info.FullName})\n");
+                }
+                else
+                {
+                    if (Question($"Overwrite old {screenName} file?", autoOverwrite))
                     {
-                        info.MoveTo(info.FullName + ".bk");
-                        onCreate?.Invoke(info);
-                        Console.WriteLine($"{screenName} overwrited.");
-                        overwrited = true;
-                    }
-                    catch (Exception error)
-                    {
-                        WriteError(error);
-                        Console.WriteLine($"{screenName} overwrite failed.");
+                        try
+                        {
+                            var oldFileName = info.FullName;
+                            var backupFileName = info.FullName + ".bk";
+                            Console.WriteLine($"Backup old {screenName} file. ({backupFileName}).");
+                            File.Delete(backupFileName);
+                            info.MoveTo(backupFileName);
+                            info = new FileInfo(oldFileName);
+
+                            Console.WriteLine($"{screenName} file overwriting...");
+                            onCreate?.Invoke(info);
+                            Console.WriteLine($"{screenName} file overwrited.\n");
+                            overwrited = true;
+                        }
+                        catch (Exception error)
+                        {
+                            WriteError(error);
+                            Console.WriteLine($"{screenName} file overwrite failed.\n");
+                        }
                     }
                 }
             }
@@ -112,7 +139,6 @@ namespace StudioIdGames.IdentifierArchiveCore
             }
             else
             {
-                Console.WriteLine($"{screenName} does not exist. ({info.FullName})");
                 return false;
             }
         }
@@ -131,14 +157,15 @@ namespace StudioIdGames.IdentifierArchiveCore
                 {
                     try
                     {
+                        Console.WriteLine($"{screenName} creating...");
                         onCreate?.Invoke(info);
-                        Console.WriteLine($"{screenName} created.");
+                        Console.WriteLine($"{screenName} created.\n");
                         created = true;
                     }
                     catch (Exception e)
                     {
                         WriteError(e);
-                        Console.WriteLine($"{screenName} creation failed.");
+                        Console.WriteLine($"{screenName} creation failed.\n");
                     }
                 }
 
@@ -148,7 +175,7 @@ namespace StudioIdGames.IdentifierArchiveCore
 
         public static void WriteError(Exception error)
         {
-            Console.Error.WriteLine($"ERROR : {error}");
+            Console.Error.WriteLine($"ERROR : {error}\n");
         }
 
         public static void Need(string master, string needType, params string[] needs)
@@ -165,7 +192,7 @@ namespace StudioIdGames.IdentifierArchiveCore
             }
         }
 
-        public static void ConsoleDeleteLine()
+        public static void DeleteLine()
         {
             int prePos = Console.CursorLeft;//現在カーソル位置を取得
             Console.SetCursorPosition(0, Console.CursorTop);

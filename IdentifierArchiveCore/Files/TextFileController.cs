@@ -7,14 +7,14 @@
         public sealed override TData? FromBytes(byte[]? bytes)
         {
             if(bytes == null) return null;
-            return new TData() { Text = TextFileObject<TData>.Encoding.GetString(bytes) };
+            return new TData() { Text = TextFileObject<TData>.DefaultEncoding.GetString(bytes) };
         }
 
         public sealed override byte[]? ToBytes(TData? data)
         {
             if (data == null) return null;
 
-            return TextFileObject<TData>.Encoding.GetBytes(data.Text);
+            return TextFileObject<TData>.DefaultEncoding.GetBytes(data.Text);
         }
     }
 }

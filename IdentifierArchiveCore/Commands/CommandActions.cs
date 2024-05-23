@@ -14,21 +14,23 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             AddCommand(SettingsView.Instance);
             AddCommand(TargetInit.Instance);
             AddCommand(TargetView.Instance);
-            AddCommand(new ZipAdd());
-            AddCommand(new ZipExtract());
-            AddCommand(new ZipCacheClear());
-            AddCommand(new ZipCacheView());
-            AddCommand(new RemoteUpload());
-            AddCommand(new RemoteDownload());
+            AddCommand(ZipAdd.Instance);
+            AddCommand(ZipExtract.Instance);
+            AddCommand(ZipCacheClear.Instance);
+            AddCommand(ZipCacheView.Instance);
+            AddCommand(RemoteUpload.Instance);
+            AddCommand(RemoteDownload.Instance);
         }
 
         public static void AddCommand<T>(T action) where T : CommandAction
         {
             definedActions.Add(action.Name, action);
+            definedActions.Add(action.CommandID, action);
         }
 
         public static int ExcuteAll(ReadOnlySpan<string> args)
         {
+            Console.WriteLine();
             var next = args;
             var comArgs = new CommandArgs();
             var lastRes = 0;
@@ -62,7 +64,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 var res = action.Excute(args);
                 if (res < 0)
                 {
-                    Console.WriteLine($"Error in action. ({action.Name})");
+                    Console.WriteLine($"Error in {action}.\n");
                     return -(1 + i);
                 }
             }

@@ -29,11 +29,18 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 return -1;
             }
 
-            var settings = folderController.GetSettingsFile();
+            Console.WriteLine("Settings file check start.\n");
 
-            if(settings == null)
+            var settings = folderController.GetSettingsFile(loadLocalkey: false);
+
+            if (settings == null)
             {
+                Console.WriteLine("Settings file check failed.\n");
                 return -1;
+            }
+            else
+            {
+                Console.WriteLine("Settings file check succeeded.\n");
             }
 
             var localkeyFolderController = new LocalKeyFolderController(settings);

@@ -15,7 +15,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
         public virtual int Excute(CommandArgs args)
         {
             Console.WriteLine($"Excute: {this}");
-            Console.WriteLine($"Args: {args}");
+            Console.WriteLine($"Args: {args}\n");
             return -1;
         }
 

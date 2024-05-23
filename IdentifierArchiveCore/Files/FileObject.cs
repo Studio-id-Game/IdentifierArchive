@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using System.Text;
 
 namespace StudioIdGames.IdentifierArchiveCore.Files
 {
@@ -43,5 +44,12 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
         }
 
         public abstract void CopyFrom(TSelf other);
+
+        public override string ToString()
+        {
+            return $"{ScreenName} ({FileName})";
+        }
+
+        public abstract string AsText();
     }
 }

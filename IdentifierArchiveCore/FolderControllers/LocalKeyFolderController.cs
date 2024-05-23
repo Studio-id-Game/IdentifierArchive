@@ -11,12 +11,14 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
 
         public override bool FolderSetup(CommandArgs args)
         {
-            return base.FolderSetup(args) && LocalkeySetup();
+            var ret = base.FolderSetup(args) && LocalkeySetup(args);
+            FolderSetupEnd(ret);
+            return ret;
         }
 
-        private bool LocalkeySetup()
+        private bool LocalkeySetup(CommandArgs args)
         {
-            return new LocalKeyFile().ToFile(FolderInfo, out var created, out _, autoCreate: true, autoOverwrite: false) || created;
+            return new LocalKeyFile().ToFile(FolderInfo, out var created, out _, autoCreate: true, autoOverwrite: args.AutoFileOverwrite) || created;
         }
 
         public LocalKeyFile? GetLocalKey()

@@ -1,18 +1,52 @@
-﻿namespace StudioIdGames.IdentifierArchiveCore.Commands
+﻿using StudioIdGames.IdentifierArchiveCore.FolderControllers;
+
+namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
-    public class ZipCacheView : ICommandAction
+    public class ZipCacheView : CommandAction
     {
-        public const string CommandID = "cv";
+        public static ZipCacheView Instance { get; } = new ZipCacheView();
 
-        public const string Name = "Zip-Cache-View";
+        private ZipCacheView() { }
 
-        string ICommandAction.CommandID => CommandID;
+        public override string CommandID => "cv";
 
-        string ICommandAction.Name => Name;
+        public override string Name => "Zip-Cache-View";
 
-        public int Excute(CommandArgs args)
+        public override int Excute(CommandArgs args)
         {
-            throw new NotImplementedException();
+            base.Excute(args);
+
+            if (!args.CheckRequire(this, settingsFodler: true, targetFolder:true))
+            {
+                return -1;
+            }
+
+            var settingsFolderController = new SettingsFolderController(args.SettingsFolder);
+            var targetFolderController = new TargetFolderController(settingsFolderController, args.TargetFolder);
+            var settings = settingsFolderController.GetSettingsFile(targetFolderController.FolderInfo, args.Identifier);
+            
+            if (settings == null)
+            {
+                return -1;
+            }
+
+            var zipFolderController = new ZipFolderController(settingsFolderController, settings);
+            if (!zipFolderController.CheckFolder())
+            {
+                Console.WriteLine($"{zipFolderController.ScreenName} folder does not exist. ({zipFolderController.FolderInfo.FullName})\n");
+                return -1;
+            }
+
+            var filenames = zipFolderController.GetAllFilesName();
+            if(filenames == null)
+            {
+                Console.WriteLine($"Failed to read {zipFolderController.ScreenName} folder. ({zipFolderController.FolderInfo.FullName})\n");
+                return -1;
+            }
+
+            Console.WriteLine($"Zip files: \n\t{string.Join("\n\t", filenames)}");
+
+            return 0;
         }
     }
 }

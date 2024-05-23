@@ -17,13 +17,16 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
 
         public override bool FolderSetup(CommandArgs args)
         {
-            return base.FolderSetup(args) && IdentifierFileSetup(args);
+            var ret = base.FolderSetup(args) && IdentifierFileSetup(args);
+            FolderSetupEnd(ret);
+            return ret;
         }
 
         private bool IdentifierFileSetup(CommandArgs args)
         {
             var archive = GetArchiveIdentifier(false)!;
             var current = GetCurrentIdentifier(false)!;
+            var gitignore = GetGitignore(false)!;
 
             if (!string.IsNullOrWhiteSpace(args.Identifier))
             {
@@ -31,15 +34,15 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
                 current.Text = args.Identifier;
             }
 
-            bool res = archive.ToFile(FolderInfo, out var created, out _, autoCreate: true, autoOverwrite: false) || created;
+            bool res = archive.ToFile(FolderInfo, out var created, out _, autoCreate: true, autoOverwrite: args.AutoFileOverwrite) || created;
             
             if (!res) return false;
 
-            res = current.ToFile(FolderInfo, out created, out _, autoCreate: true, autoOverwrite: false) || created;
+            res = current.ToFile(FolderInfo, out created, out _, autoCreate: true, autoOverwrite: args.AutoFileOverwrite) || created;
             
             if (!res) return false;
 
-            res = new GitignoreFile(GitignoreFileType.Target).ToFile(FolderInfo, out created, out _, autoCreate: true, autoOverwrite: false) || created;
+            res = gitignore.ToFile(FolderInfo, out created, out _, autoCreate: true, autoOverwrite: args.AutoFileOverwrite) || created;
 
             if (!res) return false;
 
@@ -56,6 +59,12 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
         {
             var archive = new IdentifierFile(IdentifierFileType.Current);
             return loading ? archive.FromFile(FolderInfo) : archive;
+        }
+
+        public GitignoreFile? GetGitignore(bool loading)
+        {
+            var gitignore = new GitignoreFile(GitignoreFileType.Target);
+            return loading ? gitignore.FromFile(FolderInfo) : gitignore;
         }
     }
 }

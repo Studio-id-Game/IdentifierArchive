@@ -11,7 +11,20 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
 
         public virtual bool FolderSetup(CommandArgs args)
         {
+            Console.WriteLine($"{ScreenName} folder setup start. ({FolderInfo.FullName})\n");
             return ConsoleUtility.CheckFolder(FolderInfo, ScreenName, out var created, args.AutoFolderCreate) || created;
+        }
+
+        protected void FolderSetupEnd(bool result)
+        {
+            if (result)
+            {
+                Console.WriteLine($"{ScreenName} folder setup succeeded. ({FolderInfo.FullName})\n");
+            }
+            else
+            {
+                Console.WriteLine($"{ScreenName} folder setup failed. ({FolderInfo.FullName})\n");
+            }
         }
 
         public bool CheckFolder()
@@ -44,6 +57,11 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
         public string[]? GetAllFilesName()
         {
             return GetAllFilesName(FolderInfo.FullName);
+        }
+
+        public override string ToString()
+        {
+            return $"{ScreenName} ({FolderInfo.FullName})";
         }
     }
 }

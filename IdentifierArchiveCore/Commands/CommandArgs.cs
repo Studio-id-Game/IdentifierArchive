@@ -11,6 +11,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
         public const string IdentifierArgName = "-id";
         public const string AutoFolderCreateArgName = "-auto-folder-create";
         public const string AutoFileOverwriteArgName = "-auto-file-overwrite";
+        public const string UnSafeArgName = "-UN-SAFE";
 
         private static bool TryReadString(string argNameCheck, string argName, string? argValue, out bool isEmpty)
         {
@@ -56,6 +57,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
         public string Identifier { get; set; } = string.Empty;
         public bool? AutoFolderCreate { get; set; } = null;
         public bool? AutoFileOverwrite { get; set; } = null;
+        public bool UnSafe { get; set; } = false;
 
         public bool TryRead(ReadOnlySpan<string> args, out ReadOnlySpan<string> next)
         {
@@ -99,6 +101,10 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 else if (TryReadFlag(AutoFileOverwriteArgName, argName, argValue, out flagValue))
                 {
                     AutoFileOverwrite = flagValue;
+                }
+                else if (argName == UnSafeArgName)
+                {
+                    UnSafe = true;
                 }
                 else if (argName.StartsWith('-'))
                 {
@@ -154,16 +160,19 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 Identifier = Identifier,
                 AutoFileOverwrite = AutoFileOverwrite, 
                 AutoFolderCreate = AutoFolderCreate, 
+                UnSafe = UnSafe,
             };
         }
 
         public override string ToString()
         {
-            return $"{SettingsFolderArgName}={SettingsFolder}" +
-                $" {TargetFolderArgName}={TargetFolder}" +
-                $" {IdentifierArgName}={Identifier}" +
-                $" {AutoFolderCreateArgName}={AutoFolderCreate}" +
-                $" {AutoFileOverwriteArgName}={AutoFileOverwrite}";
+            string settingsFolderInfo = $"{SettingsFolderArgName}={(string.IsNullOrEmpty(SettingsFolder) ? "(Empty)" : SettingsFolder)}";
+            string targetFolderInfo = $"{TargetFolderArgName}={(string.IsNullOrEmpty(TargetFolder) ? "(Empty)" : TargetFolder)}";
+            string identifierInfo = $"{IdentifierArgName}={(string.IsNullOrEmpty(Identifier) ? "(Empty)" : Identifier)}";
+            string autoFolderCreateInfo = $"{AutoFolderCreateArgName}={AutoFolderCreate?.ToString() ?? "(Default)"}";
+            string autoFileOverwriteInfo = $"{AutoFileOverwriteArgName}={AutoFileOverwrite?.ToString() ?? "(Default)"}";
+            string unSafeViewInfo = $"{UnSafeArgName}={UnSafe}";
+            return string.Join(' ', settingsFolderInfo, targetFolderInfo, identifierInfo, autoFolderCreateInfo, autoFileOverwriteInfo, unSafeViewInfo);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.IO.Compression;
 using System.Reflection;
+using System.Runtime.Serialization;
 using Utf8Json;
 
 namespace StudioIdGames.IdentifierArchiveCore.Files
@@ -48,8 +49,10 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
         /// </summary>
         public string DownloadCommand { get;set; } = $"%GoogleDriveStrage% d {LOCALKEY_FOLDER_ABS}\\%GoogleDriveStrage.KeyFileName% %GoogleDriveStrage.RootFolderID% {TARGET_FOLDER.Path} {ZIP_FILE_ABS}";
 
+        [IgnoreDataMember]
         public override string ScreenName => ScreenNameStatic;
 
+        [IgnoreDataMember]
         public override string FileName => FileNameStatic;
 
         private void Replace(string var, string? value)
@@ -86,7 +89,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
             Replace(SETTINGS_FILE_ABS, settingsFileInfo.FullName);
         }
 
-        public void Replace(out SettingsFile safeView, DirectoryInfo? settingsFolderInfo = null, DirectoryInfo? targetFolderInfo = null, string? identifier = null)
+        public void Replace(out SettingsFile safeView, DirectoryInfo? settingsFolderInfo = null, DirectoryInfo? targetFolderInfo = null, string? identifier = null, bool loadLocalkey = true)
         {
             if(settingsFolderInfo != null)
             {
@@ -104,20 +107,23 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
             safeView.CopyFrom(this);
 
             var localkeyFolderInfo = new DirectoryInfo(LocalkeyFolderAbsolute);
-            var localkeyFile = new LocalKeyFile().FromFile(localkeyFolderInfo);
-            if (localkeyFile != null)
+            Replace(LOCALKEY_FOLDER_ABS, localkeyFolderInfo.FullName);
+
+            if (loadLocalkey)
             {
-                foreach (var item in localkeyFile.List)
+                var localkeyFile = new LocalKeyFile().FromFile(localkeyFolderInfo);
+                if (localkeyFile != null)
                 {
-                    Replace(item.Key, item.Value);
+                    foreach (var item in localkeyFile.List)
+                    {
+                        Replace(item.Key, item.Value);
+                    }
                 }
             }
-
 
             var zipFileInfo = new FileInfo(ZipFile);
             var zipFolderInfo = zipFileInfo.Directory!;
 
-            Replace(LOCALKEY_FOLDER_ABS, localkeyFolderInfo.FullName);
             Replace(ZIP_FILE_ABS, zipFileInfo.FullName);
             Replace(ZIP_FOLDER_ABS, zipFolderInfo.FullName);
             safeView.Replace(ZIP_FILE_ABS, zipFileInfo.FullName);

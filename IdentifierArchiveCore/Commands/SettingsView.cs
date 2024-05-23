@@ -1,5 +1,6 @@
 ﻿using StudioIdGames.IdentifierArchiveCore.Files;
 using StudioIdGames.IdentifierArchiveCore.FolderControllers;
+using System.Text;
 using Utf8Json;
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
@@ -45,19 +46,24 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 return -1;
             }
 
-            Console.WriteLine($"Settings : \n{SettingsFile.Controller.ToBytes(rawView)}\n");
-            Console.WriteLine($"Settings (replaced) : \n{SettingsFile.Controller.ToBytes(safeView)}\n");
+            Console.WriteLine($"Settings : {rawView.AsText()}\n");
+            Console.WriteLine($"Settings (replaced) : {safeView.AsText()}\n");
 
-            var localKeyFolderController = new LocalKeyFolderController(settings);
-
-            var localKeyFileNames = localKeyFolderController.GetAllFilesName();
-
-            if (localKeyFileNames == null)
+            if (args.UnSafe && ConsoleUtility.Question("View unsafe data? (include local key data)", null))
             {
-                return -1;
-            }
+                Console.WriteLine($"Settings (unsafe replaced) : {settings.AsText()}\n");
 
-            Console.WriteLine($"LocalkeyFiles : \n\t{string.Join("\n\t", localKeyFileNames)}\n");
+                var localKeyFolderController = new LocalKeyFolderController(settings);
+
+                var localKeyFileNames = localKeyFolderController.GetAllFilesName();
+
+                if (localKeyFileNames == null)
+                {
+                    return -1;
+                }
+
+                Console.WriteLine($"LocalkeyFiles : \n\t{string.Join("\n\t", localKeyFileNames)}\n");
+            }
 
             return 0;
         }

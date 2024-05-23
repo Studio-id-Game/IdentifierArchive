@@ -33,13 +33,13 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             var archiveIdentifier = targetFolderController.GetArchiveIdentifier(true)?.Text ?? "(null)";
             var currentIdentifier = targetFolderController.GetCurrentIdentifier(true)?.Text ?? "(null)";
 
-            Console.WriteLine($"Archive Identifier: {archiveIdentifier}");
-            Console.WriteLine($"Current Identifier: {currentIdentifier}");
+            Console.WriteLine($"Archive Identifier: {archiveIdentifier}\n");
+            Console.WriteLine($"Current Identifier: {currentIdentifier}\n");
             
             var ignores = new string[] { ".gitignore", "~", ".identifier" };
-            var filenames = (targetFolderController.GetAllFilesName() ?? []).Where(s => ignores.All(i => !s.EndsWith(i)));
+            var filenames = (targetFolderController.GetAllFilesName() ?? []).Where(s => ignores.All(i => !s.EndsWith(i))).ToArray();
 
-            Console.WriteLine($"Files: \n\t{string.Join("\n\t", filenames)}");
+            Console.WriteLine($"Files ({filenames.Length}): \n\t{string.Join("\n\t", filenames)}\n");
 
             return 0;
         }

@@ -1,4 +1,5 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace StudioIdGames.IdentifierArchiveCore.Files
 {
@@ -10,18 +11,27 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
 
         public TData? FromFile(FileInfo info, string screenName)
         {
-            Console.WriteLine($"Read {screenName} file. ({info?.FullName})");
+            Console.WriteLine($"Reading {screenName} file... ({info?.FullName})");
 
             if (info == null)
             {
-                Console.WriteLine($"FileInfo is null.");
+                Console.WriteLine($"FileInfo is null.\n");
             }
             else if (ConsoleUtility.CheckFile(info, screenName))
             {
                 try
                 {
                     var bytes = File.ReadAllBytes(info.FullName);
-                    return FromBytes(bytes);
+                    var data = FromBytes(bytes);
+                    if (data == null)
+                    {
+                        Console.WriteLine($"Failed to read {screenName} file. ({info?.FullName})\n");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Success to read {screenName} file. ({info?.FullName})\n");
+                    }
+                    return data;
                 }
                 catch (Exception e)
                 {
@@ -29,13 +39,13 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
                 }
             }
 
-            Console.WriteLine($"Failed to read {screenName} file. ({info?.FullName})");
+            Console.WriteLine($"Failed to read {screenName} file. ({info?.FullName})\n");
             return default;
         }
 
         public bool ToFile(TData data, FileInfo info, string screenName, out bool created, out bool overwrited, bool? autoCreate = false, bool? autoOverwrite = false)
         {
-            Console.WriteLine($"Write {screenName} file. ({info?.FullName})");
+            Console.WriteLine($"Writing {screenName} file... ({info?.FullName})\n");
 
             bool exists = false;
             created = false;
@@ -43,7 +53,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
 
             if (info == null)
             {
-                Console.WriteLine("FileInfo is null");
+                Console.WriteLine("FileInfo is null\n");
             }
             else
             {
@@ -54,9 +64,17 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
                 }
             }
 
-            if (!created || !overwrited)
+            if (created)
             {
-                Console.WriteLine($"Failed to write {screenName} file. ({info?.FullName})");
+                Console.WriteLine($"Success to create {screenName} file. ({info?.FullName})\n");
+            }
+            else if (overwrited)
+            {
+                Console.WriteLine($"Success to overwrite {screenName} file. ({info?.FullName})\n");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to write {screenName} file. ({info?.FullName})\n");
             }
 
             return exists;

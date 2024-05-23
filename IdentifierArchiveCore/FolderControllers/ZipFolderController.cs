@@ -13,7 +13,9 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
 
         public override bool FolderSetup(CommandArgs args)
         {
-            return base.FolderSetup(args) && GitignoreSetup();
+            var ret = base.FolderSetup(args) && GitignoreSetup();
+            FolderSetupEnd(ret);
+            return ret;
         }
 
         private bool GitignoreSetup()
