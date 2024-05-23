@@ -67,6 +67,10 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                     Console.WriteLine($"Error in {action}.\n");
                     return -(1 + i);
                 }
+                else
+                {
+                    Console.WriteLine($"{action} Complete.\n");
+                }
             }
 
             return 0;
