@@ -1,9 +1,5 @@
-﻿using System.Runtime.Serialization;
-using System.Text.RegularExpressions;
-
-namespace StudioIdGames.IdentifierArchiveCore.Files
+﻿namespace StudioIdGames.IdentifierArchiveCore.Files
 {
-
     public sealed class IdentifierFile(IdentifierFileType type) : TextFileObject<IdentifierFile>
     {
         public static string GetScreenName(IdentifierFileType type)
@@ -43,7 +39,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
 
         public static string FixIdentifier(string identifier, int add)
         {
-            var regex = FindNumRegex();
+            var regex = RegexUtility.FindNumRegex();
             var match = regex.Match(identifier);
 
             if (match.Success)
@@ -62,8 +58,5 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
                 return identifier + "_00000";
             }
         }
-
-        [GeneratedRegex(@"(\d+)$")]
-        private static partial Regex FindNumRegex();
     }
 }
