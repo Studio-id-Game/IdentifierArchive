@@ -2,15 +2,15 @@
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
-    public class ZipCacheView : CommandAction
+    public class ZipView : CommandAction
     {
-        public static ZipCacheView Instance { get; } = new ZipCacheView();
+        public static ZipView Instance { get; } = new ZipView();
 
-        private ZipCacheView() { }
+        private ZipView() { }
 
-        public override string CommandID => "cv";
+        public override string CommandID => "zv";
 
-        public override string Name => "Zip-Cache-View";
+        public override string Name => "Zip-View";
 
         public override int Excute(CommandArgs args)
         {

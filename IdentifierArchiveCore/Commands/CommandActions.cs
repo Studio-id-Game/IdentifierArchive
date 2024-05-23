@@ -16,8 +16,8 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             AddCommand(TargetView.Instance);
             AddCommand(ZipAdd.Instance);
             AddCommand(ZipExtract.Instance);
-            AddCommand(ZipCacheClear.Instance);
-            AddCommand(ZipCacheView.Instance);
+            AddCommand(ZipClear.Instance);
+            AddCommand(ZipView.Instance);
             AddCommand(RemoteUpload.Instance);
             AddCommand(RemoteDownload.Instance);
         }
