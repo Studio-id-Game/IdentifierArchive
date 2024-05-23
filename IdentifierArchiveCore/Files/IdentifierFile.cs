@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 
 namespace StudioIdGames.IdentifierArchiveCore.Files
 {
@@ -34,5 +35,35 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
         public override string ScreenName => GetScreenName(Type);
 
         public override string FileName => GetFileName(Type);
+
+        public void FixIdentifier(int add)
+        {
+            Text = FixIdentifier(Text, add);
+        }
+
+        public static string FixIdentifier(string identifier, int add)
+        {
+            var regex = FindNumRegex();
+            var match = regex.Match(identifier);
+
+            if (match.Success)
+            {
+                string numberString = match.Value;
+
+                int number = int.Parse(numberString);
+                number += add;
+
+                string newNumberString = number.ToString("D5");
+
+                return string.Concat(identifier.AsSpan(0, match.Index), newNumberString);
+            }
+            else
+            {
+                return identifier + "_00000";
+            }
+        }
+
+        [GeneratedRegex(@"(\d+)$")]
+        private static partial Regex FindNumRegex();
     }
 }
