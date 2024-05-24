@@ -150,6 +150,6 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
 
         public DirectoryInfo GetLocalkeyFolderInfo() => new(LocalkeyFolderAbsolute);
 
-        public FileInfo GetZipFileInfo(DirectoryInfo settingsFolder) => new($"{settingsFolder.FullName}/{ZipFile}");
+        public FileInfo GetZipFileInfo() => new(ZipFile);
     }
 }
