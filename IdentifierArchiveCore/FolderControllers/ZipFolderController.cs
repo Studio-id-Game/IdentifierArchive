@@ -3,13 +3,13 @@ using StudioIdGames.IdentifierArchiveCore.Files;
 
 namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
 {
-    public class ZipFolderController(SettingsFolderController settingsFolderController, SettingsFile settings) : FolderController
+    public class ZipFolderController(SettingsFile settings) : FolderController
     {
         public override string ScreenName => "ZipArchive";
 
         private static GitignoreFile Gitignore => new(GitignoreFileType.Zip);
 
-        public override DirectoryInfo FolderInfo => settings.GetZipFileInfo(settingsFolderController.FolderInfo).Directory!;
+        public override DirectoryInfo FolderInfo => settings.GetZipFileInfo().Directory!;
 
         public override bool FolderSetup(CommandArgs args)
         {
