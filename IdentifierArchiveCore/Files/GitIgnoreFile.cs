@@ -20,8 +20,8 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
         {
             return type switch
             {
-                GitignoreFileType.Target => string.Join('\n', "*", $"!{FileNameStatic}", $"!{IdentifierFile.GetFileName(IdentifierFileType.Archive)}"),
-                GitignoreFileType.Zip => string.Join('\n', "*", $"!{FileNameStatic}"),
+                GitignoreFileType.Target => string.Join('\n', "*", $"!/{FileNameStatic}", $"!/{IdentifierFile.GetFileName(IdentifierFileType.Archive)}"),
+                GitignoreFileType.Zip => string.Join('\n', "*", $"!/{FileNameStatic}"),
                 _ => ""
             };
         }
