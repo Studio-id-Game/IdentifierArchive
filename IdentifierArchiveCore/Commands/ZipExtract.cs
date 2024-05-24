@@ -98,8 +98,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 }
             }
 
-
-            targetFolderController.GitFileList("git", out var _, out var ignoredFiles);
+            targetFolderController.GitFileList(settings.GitExePath, out var _, out var ignoredFiles);
 
             Console.WriteLine($"Delete old files\n");
 

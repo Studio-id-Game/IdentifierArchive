@@ -49,6 +49,11 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
         /// </summary>
         public string DownloadCommand { get;set; } = $"%GoogleDriveStrage% d {LOCALKEY_FOLDER_ABS}\\%GoogleDriveStrage.KeyFileName% %GoogleDriveStrage.RootFolderID% {TARGET_FOLDER.Path} {ZIP_FILE_ABS}";
 
+        /// <summary>
+        /// Gitの実行ファイルにアクセスするためのパス
+        /// </summary>
+        public string GitExePath { get; set; } = "git";
+
         [IgnoreDataMember]
         public override string ScreenName => ScreenNameStatic;
 
@@ -65,6 +70,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
                 UnzipCommand = UnzipCommand.Replace(var, value);
                 UploadCommand = UploadCommand.Replace(var, value);
                 DownloadCommand = DownloadCommand.Replace(var, value);
+                GitExePath = GitExePath.Replace(var, value);
             }
         }
 
@@ -78,22 +84,19 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
                 UnzipCommand = value.Replace(UnzipCommand, var);
                 UploadCommand = value.Replace(UploadCommand, var);
                 DownloadCommand = value.Replace(DownloadCommand, var);
+                GitExePath = value.Replace(GitExePath, var);
             }
-        }
-
-        private void ReplaceSettingsFilePath(DirectoryInfo settingsFolderInfo)
-        {
-            var settingsFileInfo = new FileInfo($"{settingsFolderInfo}/{FileName}");
-
-            Replace(SETTINGS_FOLDER_ABS, settingsFolderInfo.FullName);
-            Replace(SETTINGS_FILE_ABS, settingsFileInfo.FullName);
         }
 
         public void Replace(out SettingsFile safeView, DirectoryInfo? settingsFolderInfo = null, DirectoryInfo? targetFolderInfo = null, string? identifier = null, bool loadLocalkey = true)
         {
             if(settingsFolderInfo != null)
             {
-                ReplaceSettingsFilePath(settingsFolderInfo);
+                var settingsFileInfo = new FileInfo($"{settingsFolderInfo}/{FileName}");
+
+                Replace(SETTINGS_FOLDER_ABS, settingsFolderInfo.FullName);
+                Replace(SETTINGS_FILE_ABS, settingsFileInfo.FullName);
+
                 if(targetFolderInfo != null)
                 {
                     var targetFolderPathInfo = new PathIdentityInfo<DirectoryInfo>(targetFolderInfo, settingsFolderInfo);
@@ -138,6 +141,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
             UnzipCommand = other.UnzipCommand;
             UploadCommand = other.UploadCommand;
             DownloadCommand = other.DownloadCommand;
+            GitExePath = other.GitExePath;
         }
 
         public int ExcuteZip() => ConsoleUtility.ExcuteCommand(ZipCommand);

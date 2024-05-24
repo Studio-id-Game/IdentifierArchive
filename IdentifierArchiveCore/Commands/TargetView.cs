@@ -35,11 +35,20 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
             Console.WriteLine($"Archive Identifier: {archiveIdentifier}\n");
             Console.WriteLine($"Current Identifier: {currentIdentifier}\n");
-            
-            var ignores = new string[] { ".gitignore", "~", ".identifier" };
-            var filenames = (targetFolderController.GetAllFilesName() ?? []).Where(s => ignores.All(i => !s.EndsWith(i))).ToArray();
 
-            Console.WriteLine($"Files ({filenames.Length}): \n\t{string.Join("\n\t", filenames)}\n");
+            targetFolderController.GitFileNameList(settings.GitExePath, out var fileNames, out var ignoreFileNames, false);
+
+            foreach (var item in ignoreFileNames ?? [])
+            {
+                Console.WriteLine($"\tArchive File: ... {args.TargetFolder}/{item}");
+            }
+
+            foreach (var item in fileNames ?? [])
+            {
+                Console.WriteLine($"\tGit File: ... {args.TargetFolder}/{item}");
+            }
+
+            Console.WriteLine();
 
             return 0;
         }
