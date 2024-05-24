@@ -43,7 +43,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
             return default;
         }
 
-        public bool ToFile(TData data, FileInfo info, string screenName, out bool created, out bool overwrited, bool? autoCreate = false, bool? autoOverwrite = false)
+        public bool ToFile(TData data, FileInfo info, string screenName, out bool created, out bool overwrited, bool? autoCreate = false, bool? autoOverwrite = false, bool overwriteBackup = true)
         {
             Console.WriteLine($"Writing {screenName} file... ({info?.FullName})\n");
 
@@ -60,7 +60,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
                 var bytes = ToBytes(data);
                 if (bytes != null)
                 {
-                    exists = ConsoleUtility.CheckFile(info, screenName, out created, out overwrited, autoCreate, autoOverwrite, (info) => File.WriteAllBytes(info.FullName, bytes));
+                    exists = ConsoleUtility.CheckFile(info, screenName, out created, out overwrited, autoCreate, autoOverwrite, (info) => File.WriteAllBytes(info.FullName, bytes), overwriteBackup);
                 }
             }
 
