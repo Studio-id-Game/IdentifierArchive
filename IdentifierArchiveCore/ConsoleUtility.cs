@@ -1,4 +1,6 @@
-﻿using StudioIdGames.IdentifierArchiveCore.Files;
+﻿using Microsoft.VisualBasic.FileIO;
+using StudioIdGames.IdentifierArchiveCore.Commands;
+using StudioIdGames.IdentifierArchiveCore.Files;
 using System.Diagnostics;
 using System.Text;
 using static System.Net.Mime.MediaTypeNames;
@@ -79,9 +81,9 @@ namespace StudioIdGames.IdentifierArchiveCore
             }
         }
 
-        public static bool CheckFile(FileInfo info, string screenName)
+        public static bool CheckFile(FileInfo info)
         {
-            return CheckFileSystem(info, $"{screenName} file");
+            return CheckFileSystem(info);
         }
 
         public static bool CheckFile(FileInfo info, string screenName, out bool created, out bool overwrited, bool? autoCreate = false, bool? autoOverwrite = false, Action<FileInfo>? onCreate = null, bool overwriteBackup = true)
@@ -127,9 +129,9 @@ namespace StudioIdGames.IdentifierArchiveCore
             return exists; 
         }
 
-        public static bool CheckFolder(DirectoryInfo info, string screenName)
+        public static bool CheckFolder(DirectoryInfo info)
         {
-            return CheckFileSystem(info, $"{screenName} folder");
+            return CheckFileSystem(info);
         }
 
         public static bool CheckFolder(DirectoryInfo info, string screenName, out bool created, bool? autoCreate = false)
@@ -137,7 +139,7 @@ namespace StudioIdGames.IdentifierArchiveCore
             return CheckFileSystem(info, $"{screenName} folder", out created, autoCreate, e => e.Create());
         }
 
-        public static bool CheckFileSystem<T>(T info, string screenName) where T : FileSystemInfo
+        public static bool CheckFileSystem<T>(T info) where T : FileSystemInfo
         {
             if (info.Exists)
             {
@@ -152,7 +154,7 @@ namespace StudioIdGames.IdentifierArchiveCore
         public static bool CheckFileSystem<T>(T info, string screenName, out bool created, bool? autoCreate = false, Action<T>? onCreate = null) where T : FileSystemInfo
         {
             created = false;
-            var exists = CheckFileSystem(info, screenName);
+            var exists = CheckFileSystem(info);
             if (exists)
             {
                 return true;
@@ -177,6 +179,46 @@ namespace StudioIdGames.IdentifierArchiveCore
 
                 return false;
             }
+        }
+
+        public static bool DeleteFile(FileInfo info, IEnumerable<string> unsafeFileNames, bool? autoFileOverwrite)
+        {
+            bool deleted = false;
+
+            Console.WriteLine($"Deleting file... ({info.FullName})");
+
+            if (info != null && info.Exists)
+            {
+                if (unsafeFileNames.Contains(info.FullName))
+                {
+                    if (Question("We recommend not deleting this file for safety reasons. Do you want to delete it?", autoFileOverwrite))
+                    {
+                        FileSystem.DeleteFile(info.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                        deleted = true;
+                    }
+                }
+                else
+                {
+                    FileSystem.DeleteFile(info.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                    deleted = true;
+                }
+            }
+            else
+            {
+
+                Console.WriteLine($"File does not exist.");
+            }
+
+            if (deleted)
+            {
+                Console.WriteLine($"File deleted. (send to recycle bin)\n");
+            }
+            else
+            {
+                Console.WriteLine($"File not deleted.\n");
+            }
+
+            return deleted;
         }
 
         public static void WriteError(Exception error)

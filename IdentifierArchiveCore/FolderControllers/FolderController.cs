@@ -116,7 +116,7 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
 
         public bool CheckFolder()
         {
-            return ConsoleUtility.CheckFolder(FolderInfo, ScreenName);
+            return ConsoleUtility.CheckFolder(FolderInfo);
         }
 
         public IEnumerable<FileInfo>? GetAllFiles()

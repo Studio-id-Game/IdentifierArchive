@@ -6,7 +6,6 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
     public class ZipExtract : CommandAction
     {
         public static ZipExtract Instance { get; } = new ZipExtract();
-        public const string BackupIdentifier = "IdentifierArchiveSystem_AutoBackup";
 
         private ZipExtract() { }
 
@@ -29,16 +28,16 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             var targetFolderController = new TargetFolderController(settingsFolderController, args.TargetFolder);
             var identifier = string.IsNullOrWhiteSpace(args.Identifier) ? targetFolderController.GetArchiveIdentifier(true)?.Text : args.Identifier;
 
-            if(identifier == null)
+            if (identifier == null)
             {
                 Console.WriteLine("Not found ArchiveIdentifier file of not set -id augument.\n");
                 return -1;
             }
 
-            if(identifier == targetFolderController.GetCurrentIdentifier(true)?.Text)
+            if (identifier == targetFolderController.GetCurrentIdentifier(true)?.Text)
             {
                 Console.WriteLine("Current and Archive identifiers match.");
-                if(!ConsoleUtility.Question("Do you want to cancel the current edit and revert to the archived state? (Current edits will be backed up)", args.AutoFileOverwrite))
+                if (!ConsoleUtility.Question("Do you want to cancel the current edit and revert to the archived state? (Current edits will be backed up)", args.AutoFileOverwrite))
                 {
                     Console.WriteLine("Not revert to the archived state.\n");
                     return 0;
@@ -64,9 +63,9 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 return -1;
             }
 
-            if (identifier != BackupIdentifier)
+            if (identifier != ZipFolderController.BackupIdentifier)
             {
-                var backupSettings = settingsFolderController.GetSettingsFile(out _, out var backupSettingsSafe, targetFolderController.FolderInfo, BackupIdentifier);
+                var backupSettings = settingsFolderController.GetSettingsFile(out _, out var backupSettingsSafe, targetFolderController.FolderInfo, ZipFolderController.BackupIdentifier);
 
                 if (backupSettings == null || backupSettingsSafe == null)
                 {

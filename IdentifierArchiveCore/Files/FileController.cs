@@ -17,7 +17,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
             {
                 Console.WriteLine($"FileInfo is null.\n");
             }
-            else if (ConsoleUtility.CheckFile(info, screenName))
+            else if (ConsoleUtility.CheckFile(info))
             {
                 try
                 {
