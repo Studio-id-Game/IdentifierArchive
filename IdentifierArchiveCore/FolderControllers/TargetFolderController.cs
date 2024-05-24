@@ -57,14 +57,39 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
 
         public IdentifierFile? GetCurrentIdentifier(bool loading)
         {
-            var archive = new IdentifierFile(IdentifierFileType.Current);
-            return loading ? archive.FromFile(FolderInfo) : archive;
+            var current = new IdentifierFile(IdentifierFileType.Current);
+            return loading ? current.FromFile(FolderInfo) : current;
         }
 
         public GitignoreFile? GetGitignore(bool loading)
         {
             var gitignore = new GitignoreFile(GitignoreFileType.Target);
             return loading ? gitignore.FromFile(FolderInfo) : gitignore;
+        }
+
+        public bool SetIdentifier(string identifier)
+        {
+            var archive = new IdentifierFile(IdentifierFileType.Archive)
+            {
+                Text = identifier
+            };
+
+            var current = new IdentifierFile(IdentifierFileType.Current)
+            {
+                Text = identifier
+            };
+
+            return archive.CreateOrUpdate(FolderInfo) && current.CreateOrUpdate(FolderInfo);
+        }
+
+        public bool SetCurrentIdentifier(string identifier)
+        {
+            var current = new IdentifierFile(IdentifierFileType.Current)
+            {
+                Text = identifier
+            };
+
+            return current.CreateOrUpdate(FolderInfo);
         }
     }
 }

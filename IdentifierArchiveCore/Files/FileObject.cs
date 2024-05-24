@@ -38,9 +38,22 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
             return Self;
         }
 
-        public bool ToFile(DirectoryInfo directoryInfo, out bool created, out bool overwrited, bool? autoCreate = false, bool? autoOverwrite = false)
+        public bool ToFile(DirectoryInfo directoryInfo, out bool created, out bool overwrited, bool? autoCreate = false, bool? autoOverwrite = false, bool overwriteBackup = true)
         {
-            return Controller.ToFile(Self, GetFileInfo(directoryInfo), ScreenName, out created, out overwrited, autoCreate, autoOverwrite);
+            return Controller.ToFile(Self, GetFileInfo(directoryInfo), ScreenName, out created, out overwrited, autoCreate, autoOverwrite, overwriteBackup);
+        }
+
+        public bool CreateOrUpdate(DirectoryInfo directoryInfo)
+        {
+            var exists = ToFile(directoryInfo, out bool created, out bool overwrited, autoCreate: true, autoOverwrite: true, overwriteBackup: false);
+            if(exists) 
+            {
+                return overwrited;
+            }
+            else
+            {
+                return created;
+            }
         }
 
         public abstract void CopyFrom(TSelf other);
