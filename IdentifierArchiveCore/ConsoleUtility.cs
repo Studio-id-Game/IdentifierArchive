@@ -22,6 +22,7 @@ namespace StudioIdGames.IdentifierArchiveCore
             try
             {
                 using var process = Process.Start(process_start_info);
+                bool hasError = false;
                 if (process != null)
                 {
                     while (!process.StandardOutput.EndOfStream)
@@ -33,11 +34,13 @@ namespace StudioIdGames.IdentifierArchiveCore
                     while (!process.StandardError.EndOfStream)
                     {
                         string? line = process.StandardError.ReadLine();
-                        Console.WriteLine(line);
+                        Console.Error.WriteLine(line);
+                        hasError = true;
                     }
 
-                    process.WaitForExit();
-                    return process.ExitCode;
+                    process.WaitForExit(100000);
+
+                    return hasError ? -1 : process.ExitCode;
                 }
 
                 return -1;
@@ -58,7 +61,7 @@ namespace StudioIdGames.IdentifierArchiveCore
             {
                 while (true)
                 {
-                    Console.Write($"{text} (y|n) > ");
+                    Console.Write($"{text}\n(y|n) > ");
                     var key = Console.ReadKey().Key;
                     if (key == ConsoleKey.Y)
                     {
@@ -81,7 +84,7 @@ namespace StudioIdGames.IdentifierArchiveCore
             return CheckFileSystem(info, $"{screenName} file");
         }
 
-        public static bool CheckFile(FileInfo info, string screenName, out bool created, out bool overwrited, bool? autoCreate = false, bool? autoOverwrite = false, Action<FileInfo>? onCreate = null)
+        public static bool CheckFile(FileInfo info, string screenName, out bool created, out bool overwrited, bool? autoCreate = false, bool? autoOverwrite = false, Action<FileInfo>? onCreate = null, bool overwriteBackup = true)
         {
             overwrited = false;
             var exists = CheckFileSystem(info, $"{screenName} file", out created, autoCreate, onCreate);
@@ -97,12 +100,15 @@ namespace StudioIdGames.IdentifierArchiveCore
                     {
                         try
                         {
-                            var oldFileName = info.FullName;
-                            var backupFileName = info.FullName + ".bk";
-                            Console.WriteLine($"Backup old {screenName} file. ({backupFileName}).");
-                            File.Delete(backupFileName);
-                            info.MoveTo(backupFileName);
-                            info = new FileInfo(oldFileName);
+                            if (overwriteBackup)
+                            {
+                                var oldFileName = info.FullName;
+                                var backupFileName = info.FullName + ".bk";
+                                Console.WriteLine($"Backup old {screenName} file. ({backupFileName}).");
+                                File.Delete(backupFileName);
+                                info.MoveTo(backupFileName);
+                                info = new FileInfo(oldFileName);
+                            }
 
                             Console.WriteLine($"{screenName} file overwriting...");
                             onCreate?.Invoke(info);
