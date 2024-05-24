@@ -30,7 +30,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 return -1;
             }
 
-            var zipFolderController = new ZipFolderController(settingsFolderController, settings);
+            var zipFolderController = new ZipFolderController(settings);
             if (!zipFolderController.CheckFolder())
             {
                 Console.WriteLine($"{zipFolderController.ScreenName} folder does not exist. ({zipFolderController.FolderInfo.FullName})\n");
@@ -44,7 +44,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 return -1;
             }
 
-            Console.WriteLine($"Zip files: \n\t{string.Join("\n\t", filenames)}");
+            Console.WriteLine($"Zip files: \n\t{string.Join("\n\t", filenames)}\n");
 
             return 0;
         }
