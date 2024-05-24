@@ -50,7 +50,7 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="xcopy &quot;$(TargetDir)&quot; &quot;$(ProjectDir)\..\bin\CombinedTest\$(Configuration)&quot; /S /I /E /Y" />
+		<Exec Command="xcopy &quot;$(TargetDir)&quot; &quot;$(ProjectDir)\..\Test~\$(Configuration)&quot; /S /I /E /Y" />
 	</Target>
 
 </Project>
