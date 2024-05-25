@@ -23,38 +23,71 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 return -1;
             }
 
-            var settingsFolderController = new SettingsFolderController(args.SettingsFolder);
-            var targetFolderController = new TargetFolderController(settingsFolderController, args.TargetFolder);
+            var settingsFolderController = new SettingsFolderController(args.SettingsFolder!);
+            var targetFolderController = new TargetFolderController(settingsFolderController, args.TargetFolder!);
             var archiveIdentifier = targetFolderController.GetArchiveIdentifier(true) ?? new IdentifierFile(IdentifierFileType.Archive);
 
-            if (!string.IsNullOrWhiteSpace(args.Identifier))
+            if (string.IsNullOrWhiteSpace(args.Identifier))
+            {
+                archiveIdentifier.FixIdentifier(1);
+            }
+            else
             {
                 archiveIdentifier.Text = args.Identifier;
                 archiveIdentifier.FixIdentifier(0);
             }
 
-            var settings = settingsFolderController.GetSettingsFile(out _, out var safe, targetFolderController.FolderInfo, archiveIdentifier.Text);
-
-            if (settings == null)
+            var settingsWithOutIdentifier = settingsFolderController.GetSettingsFile(out _, out var safeWithOutIdentifier, targetFolderController.FolderInfo);
+            if (settingsWithOutIdentifier == null || safeWithOutIdentifier == null)
             {
                 return -1;
             }
 
+            var settings = new SettingsFile();
+            settings.CopyFrom(settingsWithOutIdentifier);
+            settings.Replace(out var _, identifier: archiveIdentifier.Text, loadLocalkey: false);
+
+            var safe = new SettingsFile();
+            safe.CopyFrom(safeWithOutIdentifier);
+            safe.Replace(out var _, identifier: archiveIdentifier.Text, loadLocalkey: false);
+
             var zipFileInfo = settings.GetZipFileInfo();
-            
-            while (zipFileInfo.Exists)
+            if (zipFileInfo.Exists)
             {
-                Console.WriteLine($"{archiveIdentifier.Text} exists. ({zipFileInfo.FullName})");
-                archiveIdentifier.FixIdentifier(1);
+                Console.WriteLine($"File is exists. ({zipFileInfo.FullName})");
 
-                settings = settingsFolderController.GetSettingsFile(out _, out safe, targetFolderController.FolderInfo, archiveIdentifier.Text);
-                
-                if (settings == null)
+                if (ConsoleUtility.Question("Overwrite this file?", args.AutoFileOverwrite))
                 {
-                    return -1;
+                    ConsoleUtility.DeleteFile(zipFileInfo, [], true);
                 }
+                else 
+                {
+                    var oldIdentifier = archiveIdentifier.Text;
+                    if (settingsWithOutIdentifier == null)
+                    {
+                        return -1;
+                    }
 
-                zipFileInfo = settings.GetZipFileInfo();
+                    while (zipFileInfo.Exists)
+                    {
+                        archiveIdentifier.FixIdentifier(1);
+
+                        settings = new();
+                        settings.CopyFrom(settingsWithOutIdentifier);
+                        settings.Replace(out _, identifier: archiveIdentifier.Text, loadLocalkey: false);
+
+                        safe = new SettingsFile();
+                        safe.CopyFrom(safeWithOutIdentifier);
+                        safe.Replace(out var _, identifier: archiveIdentifier.Text, loadLocalkey: false);
+
+                        zipFileInfo = settings.GetZipFileInfo();
+                    }
+
+                    if (!ConsoleUtility.Question($"Increment identifier? ({oldIdentifier} to {archiveIdentifier.Text})", args.AutoIdentifierIncrement))
+                    {
+                        return -1;
+                    }
+                }
             }
 
             Console.WriteLine($"Create zip file. ({zipFileInfo.FullName})");
@@ -80,7 +113,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 return -1;
             }
 
-            Console.WriteLine("Updated Identifier files.\n");
+            Console.WriteLine($"Updated Identifier files. ({archiveIdentifier.Text})\n");
 
             return 0;
         }
