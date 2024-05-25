@@ -134,7 +134,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 return -1;
             }
 
-            Console.WriteLine("Updated Identifier files.\n");
+            Console.WriteLine($"Updated current Identifier file. ({identifier})\n");
 
             return 0;
         }
