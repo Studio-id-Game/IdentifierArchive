@@ -63,12 +63,18 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 var res = action.Excute(args);
                 if (res < 0)
                 {
-                    Console.WriteLine($"Error in {action}.\n");
+                    using (new UseConsoleColor(ConsoleColor.Red))
+                    {
+                        Console.WriteLine($"Error in {action}.\n");
+                    }
                     return -(1 + i);
                 }
                 else
                 {
-                    Console.WriteLine($"{action} Complete.\n");
+                    using (new UseConsoleColor(ConsoleColor.Green))
+                    {
+                        Console.WriteLine($"{action} Complete.\n");
+                    }
                 }
             }
 
@@ -93,7 +99,10 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 }
                 else
                 {
-                    Console.WriteLine($"Unknown command. ({arg})");
+                    using (new UseConsoleColor(ConsoleColor.Red))
+                    {
+                        Console.WriteLine($"Unknown command. ({arg})");
+                    }
                     actions = [];
                     next = [];
                     return false;

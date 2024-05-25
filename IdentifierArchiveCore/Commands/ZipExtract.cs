@@ -36,8 +36,8 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
             if (identifier == targetFolderController.GetCurrentIdentifier(true)?.Text)
             {
-                Console.WriteLine("Current and Archive identifiers match.");
-                if (!ConsoleUtility.Question("Do you want to cancel the current edit and revert to the archived state? (Current edits will be backed up)", args.AutoFileOverwrite))
+                Console.WriteLine($"Current and Archive identifiers match. ({identifier})");
+                if (!ConsoleUtility.Question($"Do you want to cancel the current edit and revert to the archived state? (Current edits will be backed up as identifier={ZipFolderController.BackupIdentifier})", args.AutoFileOverwrite))
                 {
                     Console.WriteLine("Not revert to the archived state.\n");
                     return 0;
@@ -59,7 +59,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
             if (!zipFileInfo.Exists)
             {
-                Console.WriteLine($"Zip file does no exist. ({zipFileInfo.FullName})");
+                Console.WriteLine($"Zip file does no exist. ({zipFileInfo.FullName})\n");
                 return -1;
             }
 

@@ -282,7 +282,10 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 {
                     if (arg.Trim(' ', '\n', '\r', '\t').StartsWith('-'))
                     {
-                        Console.WriteLine($"Unknown arg. ({arg})");
+                        using (new UseConsoleColor(ConsoleColor.Red))
+                        {
+                            Console.WriteLine($"Unknown arg. ({arg})");
+                        }
                         return false;
                     }
                     else

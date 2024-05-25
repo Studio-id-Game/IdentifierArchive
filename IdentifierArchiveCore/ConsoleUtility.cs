@@ -2,11 +2,28 @@
 using StudioIdGames.IdentifierArchiveCore.Commands;
 using StudioIdGames.IdentifierArchiveCore.Files;
 using System.Diagnostics;
+using System.Drawing;
 using System.Text;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace StudioIdGames.IdentifierArchiveCore
 {
+    public readonly ref struct UseConsoleColor
+    {
+        private readonly ConsoleColor prev;
+
+        public UseConsoleColor(ConsoleColor color)
+        {
+            prev = Console.ForegroundColor;
+            Console.ForegroundColor = color;
+        }
+
+        public void Dispose()
+        {
+            Console.ForegroundColor = prev;
+        }
+    }
+
     public static class ConsoleUtility
     {
         public static int ExcuteCommand(string command)
@@ -63,7 +80,11 @@ namespace StudioIdGames.IdentifierArchiveCore
             {
                 while (true)
                 {
-                    Console.Write($"{text}\n(y|n) > ");
+                    using (new UseConsoleColor(ConsoleColor.Yellow))
+                    {
+                        Console.WriteLine($"{text}");
+                        Console.Write($"(y|n) > ");
+                    }
                     var key = Console.ReadKey().Key;
                     if (key == ConsoleKey.Y)
                     {
@@ -223,7 +244,11 @@ namespace StudioIdGames.IdentifierArchiveCore
 
         public static void WriteError(Exception error)
         {
-            Console.Error.WriteLine($"ERROR : {error}\n");
+            using (new UseConsoleColor(ConsoleColor.Red))
+            {
+                Console.Error.Write($"ERROR : ");
+            }
+            Console.Error.WriteLine($"{error}\n");
         }
 
         public static void Need(string master, string needType, params string[] needs)

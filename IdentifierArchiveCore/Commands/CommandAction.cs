@@ -14,8 +14,14 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
         public abstract string Name { get; }
         public virtual int Excute(CommandArgs args)
         {
-            Console.WriteLine($"Excute: {this}");
-            Console.WriteLine($"Args: {args}\n");
+            using (new UseConsoleColor(ConsoleColor.Blue))
+            {
+                Console.WriteLine($"Excute: {this}");
+            }
+            using (new UseConsoleColor(ConsoleColor.DarkGray))
+            {
+                Console.WriteLine($"Args: {args}\n");
+            }
             return -1;
         }
 
