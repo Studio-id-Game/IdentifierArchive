@@ -23,8 +23,8 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 return -1;
             }
 
-            var settingsFolderController = new SettingsFolderController(args.SettingsFolder);
-            var targetFolderController = new TargetFolderController(settingsFolderController, args.TargetFolder);
+            var settingsFolderController = new SettingsFolderController(args.SettingsFolder!);
+            var targetFolderController = new TargetFolderController(settingsFolderController, args.TargetFolder!);
 
             var settingsWithOutIdentifier = settingsFolderController.GetSettingsFile(out _, out var safe, targetFolderController.FolderInfo);
 

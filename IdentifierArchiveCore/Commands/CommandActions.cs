@@ -5,11 +5,10 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
     public class CommandActions : CommandAction
     {
-        private static readonly Dictionary<string, CommandAction> definedActions;
+        private static readonly Dictionary<string, CommandAction> definedActions = new(StringComparer.Ordinal);
 
         static CommandActions()
         {
-            definedActions = [];
             AddCommand(SettingsInit.Instance);
             AddCommand(SettingsView.Instance);
             AddCommand(TargetInit.Instance);

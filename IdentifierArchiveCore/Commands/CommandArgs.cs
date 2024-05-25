@@ -1,63 +1,265 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Design;
 using System.Xml.Linq;
+using static StudioIdGames.IdentifierArchiveCore.Commands.CommandArgs;
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
     public class CommandArgs
     {
-        public const string TargetFolderArgName = "-tf";
-        public const string SettingsFolderArgName = "-sf";
-        public const string IdentifierArgName = "-id";
-        public const string AutoFolderCreateArgName = "-auto-folder-create";
-        public const string AutoFileOverwriteArgName = "-auto-file-overwrite";
-        public const string UnSafeArgName = "-UN-SAFE";
-
-        private static bool TryReadString(string argNameCheck, string argName, string? argValue, out bool isEmpty)
+        public class ArgTargetFolder : CommandArg
         {
-            isEmpty = false;
-            if (argName == argNameCheck)
-            {
-                if (string.IsNullOrWhiteSpace(argValue))
-                {
-                    isEmpty = true;
-                }
+            public ArgTargetFolder() { }
 
-                return true;
-            }
-            else
+            public ArgTargetFolder(ArgTargetFolder sauce) : base(sauce) { }
+
+            public override string Name => $"-{nameof(ArgTargetFolder)}";
+
+            public override string ArgID => "-tf";
+
+            public override CommandArg Copy()
             {
-                return false;
+                return new ArgTargetFolder(this);
+            }
+
+            public override string ToString()
+            {
+                return ToStringAsText();
             }
         }
 
-        private static bool TryReadFlag(string argNameCheck, string argName, string? argValue, out bool? value)
+        public class ArgSettingsFolder : CommandArg
         {
-            value = null;
-            if (argName == argNameCheck)
-            {
-                switch (argValue)
-                {
-                    case "true":
-                    case null: value = true; break;
-                    case "false":
-                    case "!": value = false; break;
-                }
+            public ArgSettingsFolder() { }
 
-                return true;
-            }
-            else
+            public ArgSettingsFolder(ArgSettingsFolder sauce) : base(sauce) { }
+
+            public override string Name => $"-{nameof(ArgSettingsFolder)}";
+
+            public override string ArgID => "-sf";
+
+            public override CommandArg Copy()
             {
-                return false;
+                return new ArgSettingsFolder(this);
+            }
+            public override string ToString()
+            {
+                return ToStringAsText();
             }
         }
 
-        public string TargetFolder { get; set; } = string.Empty;
-        public string SettingsFolder { get; set; } = string.Empty;
-        public string Identifier { get; set; } = string.Empty;
-        public bool? AutoFolderCreate { get; set; } = null;
-        public bool? AutoFileOverwrite { get; set; } = null;
-        public bool UnSafe { get; set; } = false;
+        public class ArgIdentifier : CommandArg
+        {
+            public ArgIdentifier() { }
+
+            public ArgIdentifier(ArgIdentifier sauce) : base(sauce) { }
+
+            public override string Name => $"-{nameof(ArgIdentifier)}";
+
+            public override string ArgID => "-id";
+
+            public override CommandArg Copy()
+            {
+                return new ArgIdentifier(this);
+            }
+            public override string ToString()
+            {
+                return ToStringAsText();
+            }
+        }
+
+        public class ArgAutoFolderCreate : CommandArg
+        {
+            public ArgAutoFolderCreate() { }
+
+            public ArgAutoFolderCreate(ArgAutoFolderCreate sauce) : base(sauce) { }
+
+            public override string Name => $"-{nameof(ArgAutoFolderCreate)}";
+
+            public override string ArgID => "-auto-folder-c";
+
+            public override CommandArg Copy()
+            {
+                return new ArgAutoFolderCreate(this);
+            }
+
+            public override string ToString()
+            {
+                return ToStringAsFlag();
+            }
+        }
+
+        public class ArgAutoFileOverwrite : CommandArg
+        {
+            public ArgAutoFileOverwrite() { }
+
+            public ArgAutoFileOverwrite(ArgAutoFileOverwrite sauce) : base(sauce) { }
+
+            public override string Name => $"-{nameof(ArgAutoFileOverwrite)}";
+
+            public override string ArgID => "-auto-file-ow";
+
+            public override CommandArg Copy()
+            {
+                return new ArgAutoFileOverwrite(this);
+            }
+
+            public override string ToString()
+            {
+                return ToStringAsFlag();
+            }
+        }
+
+        public class ArgAutoIdentifierIncrement : CommandArg
+        {
+            public ArgAutoIdentifierIncrement() { }
+
+            public ArgAutoIdentifierIncrement(ArgAutoIdentifierIncrement sauce) : base(sauce) { }
+
+            public override string Name => $"-{nameof(ArgAutoIdentifierIncrement)}";
+
+            public override string ArgID => "-auto-id-incr";
+
+            public override CommandArg Copy()
+            {
+                return new ArgAutoIdentifierIncrement(this);
+            }
+
+            public override string ToString()
+            {
+                return ToStringAsFlag();
+            }
+        }
+
+        public class ArgUnSafe : CommandArg
+        {
+            public ArgUnSafe() { }
+
+            public ArgUnSafe(ArgUnSafe sauce) : base(sauce) { }
+
+            public override string? ValueText => throw new NotSupportedException();
+
+            public override bool? ValueFlag => throw new NotSupportedException();
+
+            public override string Name => "-UN-SAFE";
+
+            public override string ArgID => "-UN-SAFE";
+
+            public override CommandArg Copy()
+            {
+                return new ArgUnSafe(this);
+            }
+
+            public override string ToString()
+            {
+                return ToStringAsReaded();
+            }
+        }
+        
+        private static readonly List<Func<CommandArg>> definedArgs = [];
+
+        static CommandArgs()
+        {
+            AddCommand<ArgTargetFolder>();
+            AddCommand<ArgSettingsFolder>();
+            AddCommand<ArgIdentifier>();
+            AddCommand<ArgAutoFolderCreate>();
+            AddCommand<ArgAutoFileOverwrite>();
+            AddCommand<ArgUnSafe>();
+            AddCommand<ArgAutoIdentifierIncrement>();
+        }
+
+        public static void AddCommand<T>() where T : CommandArg, new()
+        {
+            foreach (var arg in definedArgs)
+            {
+                var a = arg();
+                if (a is T) return;
+            }
+
+            definedArgs.Add(() => new T());
+        }
+        
+        private readonly CommandArg[] commandArgs;
+        
+        public CommandArgs()
+        {
+            commandArgs = definedArgs.Select(e => e()).ToArray();
+        }
+
+        public CommandArgs(ReadOnlySpan<CommandArg> sauce)
+        {
+            commandArgs = new CommandArg[sauce.Length];
+            for (int i = 0; i < sauce.Length; i++)
+            {
+                commandArgs[i] = sauce[i].Copy();
+            }
+        }
+
+
+        public T? Get<T>() where T : CommandArg
+        {
+            foreach (var arg in commandArgs)
+            {
+                if(arg is T ret) return ret; 
+            }
+
+            return null;
+        }
+
+        public string? GetText<T>() where T : CommandArg
+        {
+            return Get<T>()?.ValueText;
+        }
+
+        public bool? GetFlag<T>() where T : CommandArg
+        {
+            return Get<T>()?.ValueFlag;
+        }
+
+        public string? TargetFolder
+        {
+            get => GetText<ArgTargetFolder>();
+            set => Get<ArgTargetFolder>()!.ValueText = value;
+        }
+
+        public string? SettingsFolder
+        {
+            get => GetText<ArgSettingsFolder>();
+            set => Get<ArgSettingsFolder>()!.ValueText = value;
+        }
+        
+        public string? Identifier
+        {
+            get => GetText<ArgIdentifier>();
+            set => Get<ArgIdentifier>()!.ValueText = value;
+        }
+        
+        public bool? AutoFolderCreate
+        {
+            get => GetFlag<ArgAutoFolderCreate>();
+        }
+
+        public bool? AutoFileOverwrite
+        {
+            get => GetFlag<ArgAutoFileOverwrite>();
+        }
+
+        public bool? AutoIdentifierIncrement
+        {
+            get => GetFlag<ArgAutoIdentifierIncrement>();
+        }
+
+        public bool UnSafe
+        {
+            get => GetReaded<ArgUnSafe>();
+        }
+
+        public bool GetReaded<T>() where T : CommandArg
+        {
+            return Get<T>()?.IsReaded ?? false;
+        }
 
         public bool TryRead(ReadOnlySpan<string> args, out ReadOnlySpan<string> next)
         {
@@ -66,55 +268,28 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             for (var i = 0; i < args.Length; i++)
             {
                 var arg = args[i];
-                var argSp = arg.Split('=');
-                var argName = argSp[0].Trim(' ', '\n', '\r', '\t');
-                var argValue = argSp.ElementAtOrDefault(1);
-
-                if (TryReadString(TargetFolderArgName, argName, argValue, out bool isEmpty))
+                bool readed = false;
+                foreach (var commandArg in commandArgs)
                 {
-                    if (isEmpty)
+                    if (commandArg.TryRead(arg))
                     {
-                        Console.WriteLine($"Value of arg ({TargetFolderArgName}) is empty.");
+                        readed = true;
+                        break;
+                    }
+                }
+
+                if (!readed)
+                {
+                    if (arg.Trim(' ', '\n', '\r', '\t').StartsWith('-'))
+                    {
+                        Console.WriteLine($"Unknown arg. ({arg})");
                         return false;
                     }
-
-                    TargetFolder = argValue!;
-                }
-                else if (TryReadString(SettingsFolderArgName, argName, argValue, out isEmpty))
-                {
-                    if (isEmpty)
+                    else
                     {
-                        Console.WriteLine($"Value of arg ({SettingsFolderArgName}) is empty.");
-                        return false;
+                        next = args[i..];
+                        break;
                     }
-
-                    SettingsFolder = argValue!;
-                }
-                else if (TryReadString(IdentifierArgName, argName, argValue, out isEmpty))
-                {
-                    Identifier = isEmpty ? "" : argValue ?? "";
-                }
-                else if (TryReadFlag(AutoFolderCreateArgName, argName, argValue, out var flagValue))
-                {
-                    AutoFolderCreate = flagValue;
-                }
-                else if (TryReadFlag(AutoFileOverwriteArgName, argName, argValue, out flagValue))
-                {
-                    AutoFileOverwrite = flagValue;
-                }
-                else if (argName == UnSafeArgName)
-                {
-                    UnSafe = true;
-                }
-                else if (argName.StartsWith('-'))
-                {
-                    Console.WriteLine($"Unknown arg. ({argName})");
-                    return false;
-                }
-                else
-                {
-                    next = args[i..];
-                    break;
                 }
             }
 
@@ -125,19 +300,19 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
         {
             List<string> needs = [];
 
-            if (targetFolder & string.IsNullOrWhiteSpace(TargetFolder))
+            if (NotSet<ArgSettingsFolder>(settingsFodler, out var name))
             {
-                needs.Add(TargetFolderArgName);
+                needs.Add(name);
             }
 
-            if (settingsFodler & string.IsNullOrWhiteSpace(SettingsFolder))
+            if (NotSet<ArgTargetFolder>(targetFolder, out name))
             {
-                needs.Add(SettingsFolderArgName);
+                needs.Add(name);
             }
 
-            if (identifier & string.IsNullOrWhiteSpace(Identifier))
+            if (NotSet<ArgIdentifier>(identifier, out name))
             {
-                needs.Add(IdentifierArgName);
+                needs.Add(name);
             }
 
             if (needs.Count > 0)
@@ -149,30 +324,23 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             {
                 return true;
             }
-        } 
+        }
+
+        public bool NotSet<T>(bool check, out string name) where T : CommandArg, new()
+        {
+            var arg = new T();
+            name = $"{arg.Name} ({arg.ArgID})";
+            return check && GetText<ArgTargetFolder>() == null;
+        }
 
         public CommandArgs Copy()
         {
-            return new() 
-            {
-                SettingsFolder = SettingsFolder, 
-                TargetFolder = TargetFolder,
-                Identifier = Identifier,
-                AutoFileOverwrite = AutoFileOverwrite, 
-                AutoFolderCreate = AutoFolderCreate, 
-                UnSafe = UnSafe,
-            };
+            return new(commandArgs);
         }
 
         public override string ToString()
         {
-            string settingsFolderInfo = $"{SettingsFolderArgName}={(string.IsNullOrEmpty(SettingsFolder) ? "(Empty)" : SettingsFolder)}";
-            string targetFolderInfo = $"{TargetFolderArgName}={(string.IsNullOrEmpty(TargetFolder) ? "(Empty)" : TargetFolder)}";
-            string identifierInfo = $"{IdentifierArgName}={(string.IsNullOrEmpty(Identifier) ? "(Empty)" : Identifier)}";
-            string autoFolderCreateInfo = $"{AutoFolderCreateArgName}={AutoFolderCreate?.ToString() ?? "(Default)"}";
-            string autoFileOverwriteInfo = $"{AutoFileOverwriteArgName}={AutoFileOverwrite?.ToString() ?? "(Default)"}";
-            string unSafeViewInfo = $"{UnSafeArgName}={UnSafe}";
-            return string.Join(' ', settingsFolderInfo, targetFolderInfo, identifierInfo, autoFolderCreateInfo, autoFileOverwriteInfo, unSafeViewInfo);
+            return string.Join(' ', commandArgs as object[]);
         }
     }
 }

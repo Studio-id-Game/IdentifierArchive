@@ -21,8 +21,8 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 return -1;
             }
 
-            var settingsFolderController = new SettingsFolderController(args.SettingsFolder);
-            var targetFolderController = new TargetFolderController(settingsFolderController, args.TargetFolder);
+            var settingsFolderController = new SettingsFolderController(args.SettingsFolder!);
+            var targetFolderController = new TargetFolderController(settingsFolderController, args.TargetFolder!);
             var settings = settingsFolderController.GetSettingsFile(targetFolderController.FolderInfo, args.Identifier);
 
             if (settings == null)

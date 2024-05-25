@@ -22,7 +22,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 return -1;
             }
 
-            var folderController = new SettingsFolderController(args.SettingsFolder);
+            var folderController = new SettingsFolderController(args.SettingsFolder!);
 
             if(!folderController.FolderSetup(args))
             {
