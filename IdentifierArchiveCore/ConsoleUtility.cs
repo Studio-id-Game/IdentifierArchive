@@ -107,7 +107,7 @@ namespace StudioIdGames.IdentifierArchiveCore
             return CheckFileSystem(info);
         }
 
-        public static bool CheckFile(FileInfo info, string screenName, out bool created, out bool overwrited, bool? autoCreate = false, bool? autoOverwrite = false, Action<FileInfo>? onCreate = null, bool overwriteBackup = true)
+        public static bool CheckFile(FileInfo info, string screenName, out bool created, out bool overwrited, bool? autoCreate = false, bool? autoOverwrite = false, Action<FileInfo>? onCreate = null, bool backupToRecycleBin = true)
         {
             overwrited = false;
             var exists = CheckFileSystem(info, $"{screenName} file", out created, autoCreate, onCreate);
@@ -123,17 +123,13 @@ namespace StudioIdGames.IdentifierArchiveCore
                     {
                         try
                         {
-                            if (overwriteBackup)
+                            Console.WriteLine($"{screenName} file overwriting...");
+
+                            if (backupToRecycleBin)
                             {
-                                var oldFileName = info.FullName;
-                                var backupFileName = info.FullName + ".bk";
-                                Console.WriteLine($"Backup old {screenName} file. ({backupFileName}).");
-                                File.Delete(backupFileName);
-                                info.MoveTo(backupFileName);
-                                info = new FileInfo(oldFileName);
+                                DeleteFile(info, [], true);
                             }
 
-                            Console.WriteLine($"{screenName} file overwriting...");
                             onCreate?.Invoke(info);
                             Console.WriteLine($"{screenName} file overwrited.\n");
                             overwrited = true;
