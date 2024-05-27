@@ -15,6 +15,9 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
         public static readonly string ZIP_FOLDER_ABS = $"%{nameof(ZIP_FOLDER_ABS)}%";
         public static readonly string ZIP_FILE_ABS = $"%{nameof(ZIP_FILE_ABS)}%";
         public static readonly string ZIP_EXTENSION = $"%{nameof(ZIP_EXTENSION)}%";
+        public static readonly string UPLOAD_FILE = $"{nameof(UPLOAD_FILE)}";
+        public static readonly string DOWNLOAD_FILE = $"{nameof(DOWNLOAD_FILE)}";
+
         public static readonly PathIdentity TARGET_FOLDER = new(nameof(TARGET_FOLDER));
 
         public const string ScreenNameStatic = "Settings";
@@ -46,14 +49,14 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
         public string UnzipCommand { get; set; } = $"%7z% x -t7z -ssw -m0=LZMA2 -mhe=on -p%7z.PassWord% {ZIP_FILE_ABS} -o{TARGET_FOLDER.ParentAbsolute} -aoa";
 
         /// <summary>
-        /// %ZIP_FILE_ABS% を、%ZIP_FILE_PARENT% から一意に定まるクラウドストレージにアップロードするコマンド
+        /// %UPLOAD_FILE% が表すファイルを、%TARGET_FOLDER% から一意に定まるクラウドストレージフォルダにアップロードするコマンド
         /// </summary>
-        public string UploadCommand { get; set; } = $"%GoogleDriveStrage% u {LOCALKEY_FOLDER_ABS}\\%GoogleDriveStrage.KeyFileName% %GoogleDriveStrage.RootFolderID% {TARGET_FOLDER.Path} {ZIP_FILE_ABS}";
+        public string UploadCommand { get; set; } = $"%GoogleDriveStrage% u {LOCALKEY_FOLDER_ABS}\\%GoogleDriveStrage.KeyFileName% %GoogleDriveStrage.RootFolderID% {TARGET_FOLDER.Path} {UPLOAD_FILE}";
 
         /// <summary>
-        /// %ZIP_FILE_ABS% を、%ZIP_FILE_PARENT% から一意に定まるクラウドストレージからダウンロードするコマンド
+        /// %DOWNLOAD_FILE% が表すファイルを、%TARGET_FOLDER% から一意に定まるクラウドストレージフォルダからダウンロードするコマンド
         /// </summary>
-        public string DownloadCommand { get;set; } = $"%GoogleDriveStrage% d {LOCALKEY_FOLDER_ABS}\\%GoogleDriveStrage.KeyFileName% %GoogleDriveStrage.RootFolderID% {TARGET_FOLDER.Path} {ZIP_FILE_ABS}";
+        public string DownloadCommand { get;set; } = $"%GoogleDriveStrage% d {LOCALKEY_FOLDER_ABS}\\%GoogleDriveStrage.KeyFileName% %GoogleDriveStrage.RootFolderID% {TARGET_FOLDER.Path} {DOWNLOAD_FILE}";
 
         /// <summary>
         /// Gitの実行ファイルにアクセスするためのパス
@@ -154,7 +157,6 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
                     TargetFolderInfo = targetFolderInfo;
                     Replace(TARGET_FOLDER, targetFolderPathInfo);
                     Replace(ZIP_FOLDER_ABS, GetZipFolderInfo().FullName);
-
                     SafeView.TargetFolderInfo = targetFolderInfo;
                     SafeView.Replace(TARGET_FOLDER, targetFolderPathInfo);
                     SafeView.Replace(ZIP_FOLDER_ABS, SafeView.GetZipFolderInfo().FullName);
@@ -276,16 +278,16 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
             return ConsoleUtility.ExcuteCommand(UnzipCommand);
         }
 
-        public int ExcuteUpload()
+        public int ExcuteUpload(FileInfo uploadFile)
         {
             Console.WriteLine($"Excute Upload Command :\n{SafeView?.ZipCommand}\n");
-            return ConsoleUtility.ExcuteCommand(UploadCommand);
+            return ConsoleUtility.ExcuteCommand(UploadCommand.Replace(UPLOAD_FILE, uploadFile.FullName));
         }
 
-        public int ExcuteDownload()
+        public int ExcuteDownload(FileInfo downloadFile)
         {
             Console.WriteLine($"Excute Download Command :\n{SafeView?.ZipCommand}\n");
-            return ConsoleUtility.ExcuteCommand(DownloadCommand);
+            return ConsoleUtility.ExcuteCommand(DownloadCommand.Replace(UPLOAD_FILE, downloadFile.FullName));
         }
 
         public DirectoryInfo GetLocalkeyFolderInfo()
