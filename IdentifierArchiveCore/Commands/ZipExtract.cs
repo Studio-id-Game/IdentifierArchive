@@ -48,9 +48,10 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 }
             }
 
-            var settings = settingsFolderController.GetSettingsFile(out _, out var settingsSafe, targetFolderController.FolderInfo, identifier);
+            var settings = settingsFolderController.GetSettingsFile()
+                ?.GetReplaced(targetFolderInfo: targetFolderController.FolderInfo, identifier: identifier);
 
-            if (settings == null || settingsSafe == null)
+            if (settings == null)
             {
                 return -1;
             }
@@ -65,14 +66,15 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
             if (identifier != ZipFolderController.BackupIdentifier)
             {
-                var backupSettings = settingsFolderController.GetSettingsFile(out _, out var backupSettingsSafe, targetFolderController.FolderInfo, ZipFolderController.BackupIdentifier);
+                var backupSettings = settingsFolderController.GetSettingsFile()
+                    ?.GetReplaced(targetFolderInfo: targetFolderController.FolderInfo, identifier: ZipFolderController.BackupIdentifier);
 
-                if (backupSettings == null || backupSettingsSafe == null)
+                if (backupSettings == null)
                 {
                     return -1;
                 }
 
-                Console.WriteLine($"Backup old files ({backupSettingsSafe.GetZipFileInfo().FullName})");
+                Console.WriteLine($"Backup old files ({backupSettings.SafeView?.GetZipFileInfo().FullName})");
 
                 var backupFileinfo = backupSettings.GetZipFileInfo();
                 if (backupFileinfo.Exists)
@@ -80,11 +82,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                     backupFileinfo.Delete();
                 }
 
-                Console.WriteLine($"Excute Backup Command :\n{backupSettingsSafe.ZipCommand}\n");
-
                 var backupExit = backupSettings.ExcuteZip();
-
-                Console.WriteLine();
 
                 if (backupExit < 0)
                 {
@@ -110,11 +108,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
             Console.WriteLine();
 
-            Console.WriteLine($"Excute Unzip Command :\n{settingsSafe.UnzipCommand}\n");
-
             var unzipExit = settings.ExcuteUnzip();
-
-            Console.WriteLine();
 
             if (unzipExit < 0)
             {

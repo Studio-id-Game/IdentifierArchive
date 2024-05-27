@@ -22,40 +22,16 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
             return new SettingsFile().ToFile(FolderInfo, out var created, out var overwrited, autoCreate: true, autoOverwrite: args.AutoFileOverwrite) || created || overwrited;
         }
 
-        /// <summary>
-        /// 設定ファイルを読み込みます。
-        /// </summary>
-        /// <returns></returns>
-        public SettingsFile? GetSettingsFile(DirectoryInfo? targetFolderInfo = null, string? identifier = null, bool loadLocalkey = true)
-        {
-            return GetSettingsFile(out _, out _, targetFolderInfo: targetFolderInfo, identifier: identifier, loadLocalkey: loadLocalkey);
-        }
-
-        /// <summary>
-        /// 設定ファイルを読み込みます。
-        /// </summary>
-        /// <returns></returns>
-        public SettingsFile? GetSettingsFile(out SettingsFile? rawView, out SettingsFile? safeView, DirectoryInfo? targetFolderInfo = null, string? identifier = null, bool loadLocalkey = true)
+        public SettingsFile? GetSettingsFile()
         {
             if (!CheckFolder())
             {
-                rawView = null;
-                safeView = null;    
                 return null;
             }
 
-            rawView = new SettingsFile().FromFile(FolderInfo);
-            if (rawView == null) 
-            {
-                safeView = null;
-                return null; 
-            }
+            var file = new SettingsFile().FromFile(FolderInfo);
 
-            var file = new SettingsFile();
-            file.CopyFrom(rawView);
-            file.Replace(out safeView, settingsFolderInfo: FolderInfo, targetFolderInfo: targetFolderInfo, identifier: identifier, loadLocalkey: loadLocalkey);
-
-            return file;
+            return file?.GetReplaced(FolderInfo);
         }
     }
 }

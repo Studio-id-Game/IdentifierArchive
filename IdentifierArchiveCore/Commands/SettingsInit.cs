@@ -31,7 +31,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
             Console.WriteLine("Settings file check start.\n");
 
-            var settings = folderController.GetSettingsFile(loadLocalkey: false);
+            var settings = folderController.GetSettingsFile();
 
             if (settings == null)
             {

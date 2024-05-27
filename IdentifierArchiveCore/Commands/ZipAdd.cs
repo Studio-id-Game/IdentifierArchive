@@ -37,19 +37,15 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 archiveIdentifier.FixIdentifier(0);
             }
 
-            var settingsWithOutIdentifier = settingsFolderController.GetSettingsFile(out _, out var safeWithOutIdentifier, targetFolderController.FolderInfo);
-            if (settingsWithOutIdentifier == null || safeWithOutIdentifier == null)
+            var settingsWithOutIdentifier = settingsFolderController.GetSettingsFile()?
+                .GetReplaced(targetFolderInfo: targetFolderController.FolderInfo);
+
+            if (settingsWithOutIdentifier == null)
             {
                 return -1;
             }
 
-            var settings = new SettingsFile();
-            settings.CopyFrom(settingsWithOutIdentifier);
-            settings.Replace(out var _, identifier: archiveIdentifier.Text, loadLocalkey: false);
-
-            var safe = new SettingsFile();
-            safe.CopyFrom(safeWithOutIdentifier);
-            safe.Replace(out var _, identifier: archiveIdentifier.Text, loadLocalkey: false);
+            var settings = settingsWithOutIdentifier.GetReplaced(identifier: archiveIdentifier.Text);
 
             var zipFileInfo = settings.GetZipFileInfo();
             if (zipFileInfo.Exists)
@@ -71,15 +67,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                     while (zipFileInfo.Exists)
                     {
                         archiveIdentifier.FixIdentifier(1);
-
-                        settings = new();
-                        settings.CopyFrom(settingsWithOutIdentifier);
-                        settings.Replace(out _, identifier: archiveIdentifier.Text, loadLocalkey: false);
-
-                        safe = new SettingsFile();
-                        safe.CopyFrom(safeWithOutIdentifier);
-                        safe.Replace(out var _, identifier: archiveIdentifier.Text, loadLocalkey: false);
-
+                        settings = settingsWithOutIdentifier.GetReplaced(identifier: archiveIdentifier.Text);
                         zipFileInfo = settings.GetZipFileInfo();
                     }
 
@@ -92,11 +80,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
             Console.WriteLine($"Create zip file. ({zipFileInfo.FullName})");
 
-            Console.WriteLine($"Excute Zip Command :\n{safe?.ZipCommand}\n");
-
             var ret = settings.ExcuteZip();
-
-            Console.WriteLine();
 
             if(ret < 0)
             {

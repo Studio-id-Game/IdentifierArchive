@@ -26,31 +26,32 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             var settingsFolderController = new SettingsFolderController(args.SettingsFolder!);
             var targetFolderController = new TargetFolderController(settingsFolderController, args.TargetFolder!);
 
-            var settingsWithOutIdentifier = settingsFolderController.GetSettingsFile(out _, out var safe, targetFolderController.FolderInfo);
+            var settingsWithOutIdentifier = settingsFolderController.GetSettingsFile()
+                ?.GetReplaced(targetFolderInfo: targetFolderController.FolderInfo);
 
             if (settingsWithOutIdentifier == null)
             {
                 return -1;
             }
 
-            var backupZipFolderController = new ZipFolderController(settingsWithOutIdentifier, ZipFolderController.BackupIdentifier);
+            var zipFolderController = new ZipFolderController(settingsWithOutIdentifier);
             var unsafeFileNames = new List<string>(){
-                  backupZipFolderController.GetZipFileInfo().FullName,
+                  zipFolderController.GetZipFileInfo(ZipFolderController.BackupIdentifier).FullName,
             };
 
             var currentIdentifier = targetFolderController.GetCurrentIdentifier(true)?.Text;
             if (currentIdentifier != null)
             {
-                unsafeFileNames.Add(new ZipFolderController(settingsWithOutIdentifier, currentIdentifier).GetZipFileInfo().FullName);
+                unsafeFileNames.Add(zipFolderController.GetZipFileInfo(currentIdentifier).FullName);
             }
 
             var archiveIdentifier = targetFolderController.GetArchiveIdentifier(true)?.Text;
             if (archiveIdentifier != null)
             {
-                unsafeFileNames.Add(new ZipFolderController(settingsWithOutIdentifier, archiveIdentifier).GetZipFileInfo().FullName);
+                unsafeFileNames.Add(zipFolderController.GetZipFileInfo(archiveIdentifier).FullName);
             }
 
-            var allFiles = backupZipFolderController.GetAllFiles()?.ToArray() ?? [];
+            var allFiles = zipFolderController.GetAllFiles()?.ToArray() ?? [];
             if(allFiles.Length > 0)
             {
                 if (allFiles.Length <= 2)
@@ -60,7 +61,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 else if (allFiles.Length > 0)
                 {
                     var lastAccess = allFiles.MaxBy(file => file.LastAccessTimeUtc)?.LastAccessTimeUtc ?? DateTime.UtcNow;
-                    var lastests = (backupZipFolderController.GetAllFiles() ?? [])
+                    var lastests = (zipFolderController.GetAllFiles() ?? [])
                             .OrderBy(file => file.LastAccessTimeUtc)
                             .TakeLast(3);
 
@@ -80,8 +81,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             }
             else
             {
-                var zipFolderController = new ZipFolderController(settingsWithOutIdentifier, args.Identifier);
-                zipFolderController.DeleteCache(unsafeFileNames, args.AutoFileOverwrite);
+                zipFolderController.DeleteCache(unsafeFileNames, args.AutoFileOverwrite, args.Identifier);
             }
 
             return 0;

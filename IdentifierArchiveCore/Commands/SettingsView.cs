@@ -39,15 +39,16 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
             var settingsFolderController = new SettingsFolderController(args.SettingsFolder!);
             var targetFolderController = new TargetFolderController(settingsFolderController, args.TargetFolder);
-            var settings = settingsFolderController.GetSettingsFile(out var rawView, out var safeView, targetFolderController.FolderInfo, args.Identifier);
-            
-            if (settings == null || safeView == null || rawView == null)
+            var settingsRaw = settingsFolderController.GetSettingsFile();
+            if (settingsRaw == null)
             {
                 return -1;
             }
 
-            Console.WriteLine($"Settings : {rawView.AsText()}\n");
-            Console.WriteLine($"Settings (replaced) : {safeView.AsText()}\n");
+            var settings = settingsRaw.GetReplaced(targetFolderInfo: targetFolderController.FolderInfo, identifier: args.Identifier);
+
+            Console.WriteLine($"Settings : {settingsRaw.SafeView?.AsText()}\n");
+            Console.WriteLine($"Settings (replaced) : {settings.SafeView?.AsText()}\n");
 
             if (args.UnSafe && ConsoleUtility.Question("View unsafe data? (include local key data)", null))
             {
