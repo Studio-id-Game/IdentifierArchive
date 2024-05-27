@@ -70,6 +70,24 @@ namespace StudioIdGames.IdentifierArchiveCore
             }
         }
 
+        public static string QuestionText(string text, string? autoAns)
+        {
+            if (autoAns != null)
+            {
+                return autoAns;
+            }
+            else
+            {
+                using (new UseConsoleColor(ConsoleColor.Yellow))
+                {
+                    Console.WriteLine($"{text}");
+                    Console.Write($"> ");
+                }
+
+                return Console.ReadLine() ?? "";
+            }
+        }
+
         public static bool Question(string text, bool? autoAns)
         {
             if (autoAns.HasValue)
@@ -142,6 +160,8 @@ namespace StudioIdGames.IdentifierArchiveCore
                     }
                 }
             }
+
+            Console.WriteLine();
 
             return exists; 
         }
