@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.Design;
 using System.Xml.Linq;
 using static StudioIdGames.IdentifierArchiveCore.Commands.CommandArgs;
+using System.Linq;
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
@@ -63,6 +64,27 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             {
                 return new ArgIdentifier(this);
             }
+            public override string ToString()
+            {
+                return ToStringAsText();
+            }
+        }
+
+        public class ArgUserName : CommandArg
+        {
+            public ArgUserName() { }
+
+            public ArgUserName(ArgUserName sauce) : base(sauce) { }
+
+            public override string Name => $"-{nameof(ArgUserName)}";
+
+            public override string ArgID => "-username";
+
+            public override CommandArg Copy()
+            {
+                return new ArgUserName(this);
+            }
+
             public override string ToString()
             {
                 return ToStringAsText();
@@ -138,9 +160,9 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
             public ArgUnSafe(ArgUnSafe sauce) : base(sauce) { }
 
-            public override string? ValueText => throw new NotSupportedException();
+            public override string? ValueText => null;
 
-            public override bool? ValueFlag => throw new NotSupportedException();
+            public override bool? ValueFlag => null;
 
             public override string Name => "-UN-SAFE";
 
@@ -157,6 +179,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             }
         }
         
+
         private static readonly List<Func<CommandArg>> definedArgs = [];
 
         static CommandArgs()
@@ -164,10 +187,11 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             AddCommand<ArgTargetFolder>();
             AddCommand<ArgSettingsFolder>();
             AddCommand<ArgIdentifier>();
+            AddCommand<ArgUserName>();
             AddCommand<ArgAutoFolderCreate>();
             AddCommand<ArgAutoFileOverwrite>();
-            AddCommand<ArgUnSafe>();
             AddCommand<ArgAutoIdentifierIncrement>();
+            AddCommand<ArgUnSafe>();
         }
 
         public static void AddCommand<T>() where T : CommandArg, new()
@@ -229,13 +253,19 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             get => GetText<ArgSettingsFolder>();
             set => Get<ArgSettingsFolder>()!.ValueText = value;
         }
-        
+
         public string? Identifier
         {
             get => GetText<ArgIdentifier>();
             set => Get<ArgIdentifier>()!.ValueText = value;
         }
-        
+
+        public string? UserName
+        {
+            get => GetText<ArgUserName>();
+            set => Get<ArgUserName>()!.ValueText = value;
+        }
+
         public bool? AutoFolderCreate
         {
             get => GetFlag<ArgAutoFolderCreate>();

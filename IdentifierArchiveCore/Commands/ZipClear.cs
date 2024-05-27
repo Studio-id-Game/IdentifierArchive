@@ -51,8 +51,12 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 unsafeFileNames.Add(zipFolderController.GetZipFileInfo(archiveIdentifier).FullName);
             }
 
-            var allFiles = zipFolderController.GetAllFiles()?.ToArray() ?? [];
-            if(allFiles.Length > 0)
+            var allFiles = zipFolderController.GetAllFiles()
+                ?.OrderBy(f => f.LastAccessTimeUtc)
+                ?.Where(file => file.Extension.TrimStart('.') == settingsWithOutIdentifier.ZipExtension.TrimStart('.'))
+                ?.ToArray() ?? [];
+
+            if (allFiles.Length > 0)
             {
                 if (allFiles.Length <= 2)
                 {
@@ -60,24 +64,28 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 }
                 else if (allFiles.Length > 0)
                 {
-                    var lastAccess = allFiles.MaxBy(file => file.LastAccessTimeUtc)?.LastAccessTimeUtc ?? DateTime.UtcNow;
-                    var lastests = (zipFolderController.GetAllFiles() ?? [])
-                            .OrderBy(file => file.LastAccessTimeUtc)
-                            .TakeLast(3);
+                    var lastAccess = allFiles.Last().LastAccessTimeUtc;
+                    var saveTime = lastAccess - TimeSpan.FromDays(7);
+                    Console.WriteLine($"Last access time : UTC {lastAccess} (Files before UTC {saveTime} are automatically deleted.)\n");
+                    var lastSaveIndex = Array.FindIndex(allFiles, file => file.LastAccessTimeUtc >= saveTime);
+                    var saveFiles = allFiles[lastSaveIndex..];
 
-                    Console.WriteLine(lastAccess);
-
-                    unsafeFileNames.AddRange(lastests.Select(file => file.FullName));
+                    unsafeFileNames.AddRange(saveFiles.Select(file => file.FullName));
                 }
             }
 
-            Console.WriteLine(string.Join(Environment.NewLine, unsafeFileNames));
             if (string.IsNullOrWhiteSpace(args.Identifier))
             {
-                foreach(var file in allFiles) 
+                int count = 0;
+                foreach (var file in allFiles)
                 {
-                    ConsoleUtility.DeleteFile(file, unsafeFileNames, args.AutoFileOverwrite);
+                    if (zipFolderController.DeleteCache(unsafeFileNames, args.AutoFileOverwrite, Path.GetFileNameWithoutExtension(file.Name)))
+                    {
+                        count++;
+                    }
                 }
+
+                Console.WriteLine($"Delete \"{count}\" {settingsWithOutIdentifier.ZipExtension} and meta files. ");
             }
             else
             {

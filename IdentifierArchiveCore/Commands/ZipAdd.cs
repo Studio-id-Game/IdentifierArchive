@@ -45,50 +45,13 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 return -1;
             }
 
-            var settings = settingsWithOutIdentifier.GetReplaced(identifier: archiveIdentifier.Text);
+            var zipFolderController = new ZipFolderController(settingsWithOutIdentifier);
 
-            var zipFileInfo = settings.GetZipFileInfo();
-            if (zipFileInfo.Exists)
+            var ret = zipFolderController.CreateZipFile(archiveIdentifier, args.AutoFileOverwrite, args.AutoIdentifierIncrement);
+            if (ret < 0)
             {
-                Console.WriteLine($"File is exists. ({zipFileInfo.FullName})");
-
-                if (ConsoleUtility.Question("Overwrite this file?", args.AutoFileOverwrite))
-                {
-                    ConsoleUtility.DeleteFile(zipFileInfo, [], true);
-                }
-                else 
-                {
-                    var oldIdentifier = archiveIdentifier.Text;
-                    if (settingsWithOutIdentifier == null)
-                    {
-                        return -1;
-                    }
-
-                    while (zipFileInfo.Exists)
-                    {
-                        archiveIdentifier.FixIdentifier(1);
-                        settings = settingsWithOutIdentifier.GetReplaced(identifier: archiveIdentifier.Text);
-                        zipFileInfo = settings.GetZipFileInfo();
-                    }
-
-                    if (!ConsoleUtility.Question($"Increment identifier? ({oldIdentifier} to {archiveIdentifier.Text})", args.AutoIdentifierIncrement))
-                    {
-                        return -1;
-                    }
-                }
-            }
-
-            Console.WriteLine($"Create zip file. ({zipFileInfo.FullName})");
-
-            var ret = settings.ExcuteZip();
-
-            if(ret < 0)
-            {
-                Console.WriteLine("Zip Command failed.\n");
                 return ret;
             }
-
-            Console.WriteLine("Zip Command complete.\n");
 
             Console.WriteLine("Update Identifier files...\n");
 

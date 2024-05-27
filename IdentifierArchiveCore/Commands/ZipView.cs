@@ -1,4 +1,5 @@
-﻿using StudioIdGames.IdentifierArchiveCore.FolderControllers;
+﻿using StudioIdGames.IdentifierArchiveCore.Files;
+using StudioIdGames.IdentifierArchiveCore.FolderControllers;
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
@@ -38,14 +39,29 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                 return -1;
             }
 
-            var filenames = zipFolderController.GetAllFilesName();
-            if(filenames == null)
+            var allFiles = zipFolderController.GetAllFiles();
+
+            if(allFiles == null)
             {
                 Console.WriteLine($"Failed to read {zipFolderController.ScreenName} folder. ({zipFolderController.FolderInfo.FullName})\n");
                 return -1;
             }
 
-            Console.WriteLine($"Zip files: \n\t{string.Join("\n\t", filenames)}\n");
+            Console.WriteLine($"Zip files:");
+            foreach ( var file in allFiles)
+            {
+                if(file.Extension.TrimStart('.') == settings.ZipExtension.TrimStart('.'))
+                {
+                    UserInfoFile? meta;
+                    using(new ConsoleOutKill())
+                    {
+                        meta = zipFolderController.GetZipMetaFile(Path.GetFileNameWithoutExtension(file.Name));
+                    }
+
+                    Console.WriteLine($"\t{zipFolderController.GetRelativePath(file)}\t owner: {meta?.UserName ?? "??"} ({meta?.UserID ?? "??"})");
+                }
+            }
+
 
             return 0;
         }

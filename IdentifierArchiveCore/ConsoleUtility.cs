@@ -24,6 +24,22 @@ namespace StudioIdGames.IdentifierArchiveCore
         }
     }
 
+    public readonly ref struct ConsoleOutKill
+    {
+        readonly TextWriter tw;
+
+        public ConsoleOutKill()
+        {
+            tw = Console.Out;
+            Console.SetOut(TextWriter.Null);
+        }
+
+        public void Dispose()
+        {
+            Console.SetOut(tw);
+        }
+    }
+
     public static class ConsoleUtility
     {
         public static int ExcuteCommand(string command)
@@ -160,8 +176,6 @@ namespace StudioIdGames.IdentifierArchiveCore
                     }
                 }
             }
-
-            Console.WriteLine();
 
             return exists; 
         }

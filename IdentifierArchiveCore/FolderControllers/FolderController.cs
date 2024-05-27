@@ -11,7 +11,7 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
             return infos.Select(e => Path.GetRelativePath(relativeTo, e.FullName));
         }
 
-        public static IEnumerable<string>? GetRelativePath<T>(string relativeTo,IEnumerable<T> infos) where T : FileSystemInfo
+        public static IEnumerable<string>? GetRelativePath<T>(string relativeTo, IEnumerable<T> infos) where T : FileSystemInfo
         {
             return infos.Select(e => Path.GetRelativePath(relativeTo, e.FullName));
         }
@@ -127,6 +127,11 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
             }
 
             return FolderInfo.EnumerateFiles("*", SearchOption.AllDirectories);
+        }
+
+        public string? GetRelativePath<T>(T info) where T : FileSystemInfo
+        {
+            return GetRelativePath(FolderInfo.FullName, info)?.FirstOrDefault();
         }
 
         public IEnumerable<string>? GetRelativePath<T>(params T[] infos) where T : FileSystemInfo
