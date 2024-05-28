@@ -1,18 +1,53 @@
-﻿namespace StudioIdGames.IdentifierArchiveCore.Commands
+﻿using StudioIdGames.IdentifierArchiveCore.FolderControllers;
+
+namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
-    public class RemoteDownload : ICommandAction
+    public class RemoteDownload : CommandAction
     {
-        public const string CommandID = "dl";
+        public static RemoteDownload Instance { get; } = new RemoteDownload();
 
-        public const string Name = "Download-From-Remote";
+        private RemoteDownload() { }
 
-        string ICommandAction.CommandID => CommandID;
+        public override string CommandID => "dl";
 
-        string ICommandAction.Name => Name;
+        public override string Name => "Download-From-Remote";
 
-        public int Excute(CommandArgs args)
+        public override int Excute(CommandArgs args)
         {
-            throw new NotImplementedException();
+            base.Excute(args);
+
+            if (!args.CheckRequire(this, settingsFodler: true, targetFolder: true))
+            {
+                return -1;
+            }
+
+            var settingsFolderController = new SettingsFolderController(args.SettingsFolder!);
+
+            var targetFolderController = new TargetFolderController(settingsFolderController, args.TargetFolder!);
+            var identifier = string.IsNullOrWhiteSpace(args.Identifier) ? targetFolderController.GetArchiveIdentifier(true)?.Text : args.Identifier;
+
+            if (identifier == null)
+            {
+                Console.WriteLine("Not found ArchiveIdentifier file of not set -id augument.\n");
+                return -1;
+            }
+
+            if (identifier == ZipFolderController.BackupIdentifier)
+            {
+                Console.WriteLine("Backup archive files cannot be downloaded.\n");
+            }
+
+            var settingsWithOutIdentifier = settingsFolderController.GetSettingsFile()
+                ?.GetReplaced(targetFolderInfo: targetFolderController.FolderInfo);
+
+            if (settingsWithOutIdentifier == null)
+            {
+                return -1;
+            }
+
+            var zipFolderController = new ZipFolderController(settingsWithOutIdentifier);
+
+            return zipFolderController.DownloadZipFile(identifier, args.AutoFileOverwrite);
         }
     }
 }

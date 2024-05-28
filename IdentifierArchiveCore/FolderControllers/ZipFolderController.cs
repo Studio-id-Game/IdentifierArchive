@@ -229,6 +229,31 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
             return 0;
         }
 
+        public int DownloadZipFile(string identifier, bool? autoFileOverwrite)
+        {
+            var settings = settingsWithOutIdentifier.GetReplaced(identifier: identifier);
+
+            var zipMetaFileInfo = GetZipMetaFileInfo(identifier);
+            var zipFileInfo = GetZipFileInfo(identifier);
+
+            var metaExist = ConsoleUtility.CheckFile(zipMetaFileInfo, "Zip meta", out var metaCreated, out var metaOverwrited, true, autoFileOverwrite, (info) =>
+            {
+                settings.ExcuteDownload(info);
+            });
+
+            if (!metaCreated && !(metaExist && metaOverwrited))
+            {
+                return -1;
+            }
+
+            var exist = ConsoleUtility.CheckFile(zipFileInfo, "Zip", out var created, out var overwrited, true, metaOverwrited, (info) =>
+            {
+                settings.ExcuteDownload(info);
+            });
+
+            return 0;
+        }
+
         private static bool CheckUser(UserInfoFile zipMeta, UserInfoFile userInfo)
         {
             Console.WriteLine($"UserName: {userInfo.UserName}, UserID: {userInfo.UserID}");
