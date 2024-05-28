@@ -15,8 +15,8 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
         public static readonly string ZIP_FOLDER_ABS = $"%{nameof(ZIP_FOLDER_ABS)}%";
         public static readonly string ZIP_FILE_ABS = $"%{nameof(ZIP_FILE_ABS)}%";
         public static readonly string ZIP_EXTENSION = $"%{nameof(ZIP_EXTENSION)}%";
-        public static readonly string UPLOAD_FILE = $"{nameof(UPLOAD_FILE)}";
-        public static readonly string DOWNLOAD_FILE = $"{nameof(DOWNLOAD_FILE)}";
+        public static readonly string UPLOAD_FILE = $"%{nameof(UPLOAD_FILE)}%";
+        public static readonly string DOWNLOAD_FILE = $"%{nameof(DOWNLOAD_FILE)}%";
 
         public static readonly PathIdentity TARGET_FOLDER = new(nameof(TARGET_FOLDER));
 
@@ -274,19 +274,19 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
 
         public int ExcuteUnzip()
         {
-            Console.WriteLine($"Excute Unzip Command :\n{SafeView?.ZipCommand}\n");
+            Console.WriteLine($"Excute Unzip Command :\n{SafeView?.UnzipCommand}\n");
             return ConsoleUtility.ExcuteCommand(UnzipCommand);
         }
 
         public int ExcuteUpload(FileInfo uploadFile)
         {
-            Console.WriteLine($"Excute Upload Command :\n{SafeView?.ZipCommand}\n");
+            Console.WriteLine($"Excute Upload Command :\n{SafeView?.UploadCommand.Replace(UPLOAD_FILE, uploadFile.FullName)}\n");
             return ConsoleUtility.ExcuteCommand(UploadCommand.Replace(UPLOAD_FILE, uploadFile.FullName));
         }
 
         public int ExcuteDownload(FileInfo downloadFile)
         {
-            Console.WriteLine($"Excute Download Command :\n{SafeView?.ZipCommand}\n");
+            Console.WriteLine($"Excute Download Command :\n{SafeView?.DownloadCommand.Replace(UPLOAD_FILE, downloadFile.FullName)}\n");
             return ConsoleUtility.ExcuteCommand(DownloadCommand.Replace(UPLOAD_FILE, downloadFile.FullName));
         }
 
