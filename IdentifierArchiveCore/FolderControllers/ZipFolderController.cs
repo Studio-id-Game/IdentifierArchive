@@ -172,7 +172,7 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
 
         }
 
-        public int UoloadZipFile(string identifier)
+        public int UploadZipFile(string identifier)
         {
             var settings = settingsWithOutIdentifier.GetReplaced(identifier: identifier);
             var localKeyFolderController = new LocalKeyFolderController(settings);
