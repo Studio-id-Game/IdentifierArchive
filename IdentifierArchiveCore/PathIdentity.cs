@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace StudioIdGames.IdentifierArchiveCore.Files
+namespace StudioIdGames.IdentifierArchiveCore
 {
     public readonly struct PathIdentity(string baseName)
     {

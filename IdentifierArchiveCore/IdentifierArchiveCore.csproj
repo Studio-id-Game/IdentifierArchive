@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<VersionPrefix>0.1.0</VersionPrefix>
+		<VersionPrefix>0.2.0</VersionPrefix>
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
@@ -46,6 +46,6 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="xcopy &quot;$(TargetDir)&quot; &quot;$(ProjectDir)\..\bin\CombinedTest\$(Configuration)&quot; /S /I /E /Y" />
+	  <Exec Command="xcopy &quot;$(TargetDir)&quot; &quot;$(ProjectDir)\..\Test~\$(Configuration)&quot; /S /I /E /Y" />
 	</Target>
 </Project>
