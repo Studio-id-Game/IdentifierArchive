@@ -48,7 +48,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
             var zipFolderController = new ZipFolderController(settingsWithOutIdentifier);
 
-            return zipFolderController.UoloadZipFile(identifier);
+            return zipFolderController.UploadZipFile(identifier);
         }
     }
 }
