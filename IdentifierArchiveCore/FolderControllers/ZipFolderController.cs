@@ -178,12 +178,14 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
             var localKeyFolderController = new LocalKeyFolderController(settings);
 
             var zipMetaFileInfo = GetZipMetaFileInfo(identifier);
-            var zipMetaFile = GetZipMetaFile(identifier);
-            if (!zipMetaFileInfo.Exists || zipMetaFile == null)
+            if (!zipMetaFileInfo.Exists)
             {
                 Console.WriteLine($"Zip meta file does not exist. ({zipMetaFileInfo.FullName})\n");
                 return -1;
             }
+
+            var zipMetaFile = new UserInfoFile() { CustomFileName = identifier };
+            zipMetaFile = zipMetaFile.FromFile(zipMetaFileInfo)!;
 
             var userInfo = localKeyFolderController.GetUserInfo();
             if (userInfo == null)
@@ -227,14 +229,12 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
             return 0;
         }
 
-        private bool CheckUser(UserInfoFile zipMeta, UserInfoFile userInfo)
+        private static bool CheckUser(UserInfoFile zipMeta, UserInfoFile userInfo)
         {
-            var metaFileData = zipMeta.FromFile(FolderInfo)!;
-            
             Console.WriteLine($"UserName: {userInfo.UserName}, UserID: {userInfo.UserID}");
-            Console.WriteLine($"File owner UserName: {metaFileData.UserName}, File owner UserID: {metaFileData.UserID}\n");
+            Console.WriteLine($"File owner UserName: {zipMeta.UserName}, File owner UserID: {zipMeta.UserID}\n");
 
-            if (metaFileData.UserID == userInfo.UserID)
+            if (zipMeta.UserID == userInfo.UserID)
             {
                 return true;
             }
@@ -242,7 +242,7 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
             {
                 using (new UseConsoleColor(ConsoleColor.Red))
                 {
-                    Console.WriteLine($"You can not edit this file. (you can edit only your created archive.)");
+                    Console.WriteLine($"You can not edit or upload this file. (you can edit only your created archive.)");
                 }
 
                 return false;

@@ -30,10 +30,15 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
 
         public TSelf? FromFile(DirectoryInfo directoryInfo)
         {
-            var data = Controller.FromFile(GetFileInfo(directoryInfo), ScreenName);
-            
-            if(data == null) return null;
-            
+            return FromFile(GetFileInfo(directoryInfo));
+        }
+
+        public TSelf? FromFile(FileInfo fileInfo)
+        {
+            var data = Controller.FromFile(fileInfo, ScreenName);
+
+            if (data == null) return null;
+
             Self.CopyFrom(data);
             return Self;
         }

@@ -13,8 +13,6 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
         public override string Name => "Zip-Extract";
 
-
-
         public override int Excute(CommandArgs args)
         {
             base.Excute(args);
