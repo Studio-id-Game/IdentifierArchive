@@ -286,8 +286,8 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
 
         public int ExcuteDownload(FileInfo downloadFile)
         {
-            Console.WriteLine($"Excute Download Command :\n{SafeView?.DownloadCommand.Replace(UPLOAD_FILE, downloadFile.FullName)}\n");
-            return ConsoleUtility.ExcuteCommand(DownloadCommand.Replace(UPLOAD_FILE, downloadFile.FullName));
+            Console.WriteLine($"Excute Download Command :\n{SafeView?.DownloadCommand.Replace(DOWNLOAD_FILE, downloadFile.FullName)}\n");
+            return ConsoleUtility.ExcuteCommand(DownloadCommand.Replace(DOWNLOAD_FILE, downloadFile.FullName));
         }
 
         public DirectoryInfo GetLocalkeyFolderInfo()
