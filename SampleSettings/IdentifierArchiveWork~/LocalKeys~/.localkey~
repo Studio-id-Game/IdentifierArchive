@@ -1,0 +1,11 @@
+{
+  "List": {
+    "%CacheRoot%": "D:\\",
+    "%ProjectName%": "",
+    "%7z%": "C:\\Program Files\\7-Zip\\7z.exe",
+    "%7z.PassWord%": "",
+    "%GoogleDriveStrage%": "GoogleDriveStrage.exe",
+    "%GoogleDriveStrage.KeyFileName%": ".gdrivelocalkey~",
+    "%GoogleDriveStrage.RootFolderID%": ""
+  }
+}

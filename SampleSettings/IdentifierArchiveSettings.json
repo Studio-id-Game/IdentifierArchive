@@ -1,0 +1,10 @@
+{
+  "LocalkeyFolderAbsolute": "%SETTINGS_FOLDER_ABS%\\IdentifierArchiveWork~\\LocalKeys~\\",
+  "ZipFolderAbsolute": "%CacheRoot%\\IdentifierArchiveCache~\\%ProjectName%\\%TARGET_FOLDER%\\",
+  "ZipExtension": ".7z",
+  "ZipCommand": "\"%7z%\" a -t7z -ssw -m0=LZMA2 -mhe=on -p%7z.PassWord% %ZIP_FILE_ABS% %TARGET_FOLDER_ABS% -uq0 -xr!*.identifier",
+  "UnzipCommand": "\"%7z%\" x -t7z -ssw -m0=LZMA2 -mhe=on -p%7z.PassWord% %ZIP_FILE_ABS% -o%TARGET_FOLDER_PARENT_ABS% -aoa",
+  "UploadCommand": "\"%GoogleDriveStrage%\" u %LOCALKEY_FOLDER_ABS%\\%GoogleDriveStrage.KeyFileName% %GoogleDriveStrage.RootFolderID% %TARGET_FOLDER% %UPLOAD_FILE%",
+  "DownloadCommand": "\"%GoogleDriveStrage%\" d %LOCALKEY_FOLDER_ABS%\\%GoogleDriveStrage.KeyFileName% %GoogleDriveStrage.RootFolderID% %TARGET_FOLDER% %DOWNLOAD_FILE%",
+  "GitExePath": "git"
+}
