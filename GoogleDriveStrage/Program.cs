@@ -12,21 +12,21 @@ namespace StudioIdGames.GoogleDriveStrage
 
         private static int Main(string[] args)
         {
-            if(args.Length == 0) 
+            if (args.Length == 0)
             {
                 Console.WriteLine("GoogleDriveStrage is installed.");
                 return 0;
             }
             else
             {
-                switch(args[0])
+                switch (args[0])
                 {
                     case "u":
                         return Upload(args.AsSpan()[1..]);
                     case "d":
                         return Download(args.AsSpan()[1..]);
                     default:
-                        Console.WriteLine("Unkown Command.");
+                        Console.WriteLine("Unkown Command.\n");
                         return -1;
 
                 }
@@ -37,7 +37,7 @@ namespace StudioIdGames.GoogleDriveStrage
         {
             if (args.Length < 4)
             {
-                Console.WriteLine("Unkown Command.");
+                Console.WriteLine("Unkown Command.\n");
                 return -1;
             }
 
@@ -56,7 +56,7 @@ namespace StudioIdGames.GoogleDriveStrage
             }
             catch (Exception e)
             {
-                Console.WriteLine("Credential Error : " + e.Message);
+                Console.WriteLine($"Credential Error : {e.Message}\n");
                 return -1;
             }
 
@@ -80,20 +80,19 @@ namespace StudioIdGames.GoogleDriveStrage
             }
             catch (Exception e)
             {
-                Console.WriteLine("Get Folder List Error : " + e.Message);
+                Console.WriteLine($"Get Folder List Error : {e.Message}\n");
                 return -1;
             }
 
-            if(list.Count == 0)
+            if (list.Count == 0)
             {
                 try
                 {
-                    Console.WriteLine($"Create {subFolderName} folder");
                     list = [CreateFolder(service, strageRootFolderID, subFolderName)];
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Create Folder Error : " + e.Message);
+                    Console.WriteLine($"Error : {e.Message}\n");
                     return -1;
                 }
             }
@@ -103,8 +102,13 @@ namespace StudioIdGames.GoogleDriveStrage
             {
                 using FileStream file = new(filePath, FileMode.Open);
 
-                CreateOrUpdateFile(service, folder.Id, Path.GetFileName(filePath), file);
+                if (CreateOrUpdateFile(service, folder.Id, Path.GetFileName(filePath), file) < 0)
+                {
+                    return -1;
+                }
             }
+
+            Console.WriteLine($"Upload completed. ({Path.GetFileName(filePath)} to {subFolderName})\n");
 
             return 0;
         }
@@ -113,7 +117,7 @@ namespace StudioIdGames.GoogleDriveStrage
         {
             if (args.Length < 4)
             {
-                Console.WriteLine("Unkown Command.");
+                Console.WriteLine("Unkown Command.\n");
                 return -1;
             }
 
@@ -133,7 +137,7 @@ namespace StudioIdGames.GoogleDriveStrage
             }
             catch (Exception e)
             {
-                Console.WriteLine("Credential Error : " + e.Message);
+                Console.WriteLine($"Credential Error : {e.Message}\n");
                 return -1;
             }
 
@@ -146,9 +150,9 @@ namespace StudioIdGames.GoogleDriveStrage
 
             DriveService service = new(init);
 
-            Console.WriteLine($"Search {subFolderName} folder in root folder.");
+            Console.WriteLine($"Search {subFolderName} folder.");
             var subFolder = GetFileWithName(service, strageRootFolderID, "root", subFolderName, $"and mimeType='{MimeTypeGoogleDriveFolder}'");
-            if(subFolder == null) return -1;
+            if (subFolder == null) return -1;
 
             Console.WriteLine($"Download [{subFolderName}]->[{fileName}] to {filePath}");
             var file = GetFileWithName(service, subFolder.Id, subFolderName, fileName);
@@ -158,10 +162,11 @@ namespace StudioIdGames.GoogleDriveStrage
             using var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write);
             req.Download(fs);
 
+            Console.WriteLine($"Download completed. ({Path.GetFileName(filePath)} from {subFolderName})\n");
             return 0;
         }
 
-        private static void CreateOrUpdateFile(DriveService service, string parentID, string fileName, FileStream file)
+        private static int CreateOrUpdateFile(DriveService service, string parentID, string fileName, FileStream file)
         {
             var listRequest = service.Files.List();
             listRequest.Q = $"'{parentID}' in parents and name='{fileName}' and trashed=false";
@@ -169,30 +174,46 @@ namespace StudioIdGames.GoogleDriveStrage
             File meta = new()
             {
                 Name = fileName,
-                Parents = [parentID],
             };
 
             var list = listRequest.Execute().Files;
+
             if (list == null || list.Count == 0)
             {
+                meta.Parents = [parentID];
+
                 var req = service.Files.Create(meta, file, null);
                 req.Fields = "id, name";
-                req.Upload();
+                var res = req.Upload();
+
+                if (res.Status == UploadStatus.Failed)
+                {
+                    Console.WriteLine($"Error: {res.Exception.Message}");
+                    return -1;
+                }
             }
             else
             {
                 Console.WriteLine($"UPDATE MODE");
-                foreach (var item in list)
+                foreach (var oldMeta in list)
                 {
-                    var req = service.Files.Update(meta, item.Id, file, null);
+                    var req = service.Files.Update(meta, oldMeta.Id, file, null);
                     req.Fields = "id, name";
-                    req.Upload();
+                    var res = req.Upload();
+                    if (res.Status == UploadStatus.Failed)
+                    {
+                        Console.WriteLine($"Error: {res.Exception.Message}");
+                        return -1;
+                    }
                 }
             }
+
+            return 0;
         }
 
         private static File CreateFolder(DriveService service, string parentID, string name)
         {
+            Console.WriteLine($"Create {name} folder");
             var fobj = new File
             {
                 Name = name,
@@ -218,24 +239,24 @@ namespace StudioIdGames.GoogleDriveStrage
             }
             catch (Exception e)
             {
-                Console.WriteLine("ERROR : " + e.Message);
+                Console.WriteLine($"ERROR : {e.Message}\n");
                 return null;
             }
 
-            if (list.Count == 0)
+            if (list.Count <= 0)
             {
-                Console.WriteLine($"Not exists {name} in {parentName} folder.");
+                Console.WriteLine($"Does not exist {name} in {parentName} folder.\n");
+                return null;
+            }
+            else if (list.Count > 1)
+            {
+                Console.WriteLine($"Meny exists {name} in {parentName} folder. (count = {list.Count})\n");
                 return null;
             }
 
-            if (list.Count >= 2)
-            {
-                Console.WriteLine($"Meny Exists {name} in {parentName} folder : count = {list.Count}");
-                return null;
-            }
+            Console.WriteLine($"Exits {name} in {parentName} folder.\n");
 
             return list[0];
         }
-
     }
 }
