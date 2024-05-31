@@ -42,7 +42,7 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="xcopy &quot;$(TargetDir)&quot; &quot;$(ProjectDir)\..\DevTools/LicenseHunter&quot; /S /I /E /Y" />
+		<Exec Command="PowerShell &quot;./post.ps1&quot; &quot;$(TargetDir.Replace(&quot;\&quot;,&quot;/&quot;))&quot; &quot;$(ProjectDir.Replace(&quot;\&quot;,&quot;/&quot;))/../DevTools/$(AssemblyName)_$(VersionPrefix)&quot;" />
 	</Target>
 	
 </Project>
