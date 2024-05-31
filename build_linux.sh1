@@ -1,6 +1,6 @@
 cd ./IdentifierArchive
-dotnet build configuration LinuxRelease
+dotnet build --configuration LinuxRelease
 cd ./../GoogleDriveStrage
-dotnet build configuration LinuxRelease
+dotnet build --configuration LinuxRelease
 cd ./../DevTools.LicenseHunter
-dotnet build configuration LinuxRelease
+dotnet build --configuration LinuxRelease
