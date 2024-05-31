@@ -70,12 +70,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="ThirdPartyNotices\LICENSE_Utf8Json.txt">
-			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</None>
-		<None Update="THIRD_PARTY_NOTICES_IdentifierArchive.txt">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
+	  <None Update="THIRD_PARTY_NOTICES_IdentifierArchive.txt">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">

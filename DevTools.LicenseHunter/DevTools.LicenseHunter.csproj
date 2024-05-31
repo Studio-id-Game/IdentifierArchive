@@ -49,6 +49,9 @@
 	  <None Update="THIRD_PARTY_NOTICES.txt">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <None Update="THIRD_PARTY_NOTICES_LicenseHunter.txt">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
