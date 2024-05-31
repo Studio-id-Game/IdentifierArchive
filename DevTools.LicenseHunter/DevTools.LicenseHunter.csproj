@@ -23,6 +23,15 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Configurations>Debug;Release;LinuxRelease</Configurations>
 	</PropertyGroup>
+	
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LinuxRelease|AnyCPU'">
+	  <Optimize>True</Optimize>
+	  <DebugType>none</DebugType>
+	</PropertyGroup>
+	
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <DebugType>none</DebugType>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<None Include="..\LICENSE">
@@ -43,8 +52,8 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Condition="'$(Configuration)'=='Release' or '$(Configuration)'=='Debug'" Command="PowerShell &quot;./post.ps1&quot; '$(TargetDir)' '$(ProjectDir)' 'DevTools/$(AssemblyName)_$(VersionPrefix)'" />
-		<Exec Condition="'$(Configuration)'=='LinuxRelease'" Command="pwsh &quot;./post.ps1&quot; '$(TargetDir)' '$(ProjectDir)' 'DevTools/$(AssemblyName)_$(VersionPrefix)'" />
+		<Exec Condition="'$(Configuration)'=='Release' or '$(Configuration)'=='Debug'" Command="PowerShell &quot;./post_win.ps1&quot; '$(TargetDir)' '$(ProjectDir)' 'DevTools/$(AssemblyName)_$(VersionPrefix)'" />
+		<Exec Condition="'$(Configuration)'=='LinuxRelease'" Command="pwsh &quot;./post_lin.ps1&quot; '$(TargetDir)' '$(ProjectDir)' 'DevTools/$(AssemblyName)_$(VersionPrefix)'" />
 	</Target>
 	
 </Project>

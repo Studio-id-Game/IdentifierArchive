@@ -5,6 +5,7 @@ $ProjectDir = $($ProjectDir).Replace("\","/");
 $TargetName = $($TargetName).Replace("\","/");
 $CopyTo = "$($ProjectDir)/../$($TargetName)"
 
-echo "copy $($TargetDir) to $($CopyTo)"
+echo "mkdir -p $($CopyTo)"
 mkdir -p $($CopyTo)
-cp -r -v -force "$($TargetDir)/*" $($CopyTo)
+echo "rsync -rv --delete "$($TargetDir)" "$($CopyTo)""
+rsync -rv --delete "$($TargetDir)" "$($CopyTo)"
