@@ -21,6 +21,20 @@
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Configurations>Debug;Release;LinuxRelease</Configurations>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LinuxRelease|AnyCPU'">
+	  <Optimize>True</Optimize>
+	  <DebugType>none</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <DebugType>portable</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <DebugType>none</DebugType>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -41,16 +55,31 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Properties\Resources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resources.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Properties\Resources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Update="ThirdPartyNotices\LICENSE_Utf8Json.txt">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</None>
-		<None Update="THIRD_PARTY_NOTICES.txt">
+		<None Update="THIRD_PARTY_NOTICES_IdentifierArchive.txt">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="PowerShell &quot;./post.ps1&quot; &quot;$(TargetDir.Replace(&quot;\&quot;,&quot;/&quot;))&quot; &quot;$(ProjectDir.Replace(&quot;\&quot;,&quot;/&quot;))/../$(Configuration)/$(AssemblyName)_$(VersionPrefix)&quot;" />
+		<Exec Condition="'$(Configuration)'=='Release' or '$(Configuration)'=='Debug'" Command="PowerShell &quot;./post.ps1&quot; '$(TargetDir)' '$(ProjectDir)' '$(Configuration)/Win/$(AssemblyName)_$(VersionPrefix)'" />
+		<Exec Condition="'$(Configuration)'=='LinuxRelease'" Command="pwsh &quot;./post.ps1&quot; '$(TargetDir)' '$(ProjectDir)' 'Release/Linux/$(AssemblyName)_$(VersionPrefix)'" />
 	</Target>
-
 </Project>

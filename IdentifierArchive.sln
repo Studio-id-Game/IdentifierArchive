@@ -14,23 +14,32 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		LinuxRelease|Any CPU = LinuxRelease|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{098074D2-7B82-40E8-8C63-6323D5D17E83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{098074D2-7B82-40E8-8C63-6323D5D17E83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{098074D2-7B82-40E8-8C63-6323D5D17E83}.LinuxRelease|Any CPU.ActiveCfg = LinuxRelease|Any CPU
+		{098074D2-7B82-40E8-8C63-6323D5D17E83}.LinuxRelease|Any CPU.Build.0 = LinuxRelease|Any CPU
 		{098074D2-7B82-40E8-8C63-6323D5D17E83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{098074D2-7B82-40E8-8C63-6323D5D17E83}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5799099F-5A70-4E37-8198-90B8C4897E9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5799099F-5A70-4E37-8198-90B8C4897E9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5799099F-5A70-4E37-8198-90B8C4897E9B}.LinuxRelease|Any CPU.ActiveCfg = LinuxRelease|Any CPU
+		{5799099F-5A70-4E37-8198-90B8C4897E9B}.LinuxRelease|Any CPU.Build.0 = LinuxRelease|Any CPU
 		{5799099F-5A70-4E37-8198-90B8C4897E9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5799099F-5A70-4E37-8198-90B8C4897E9B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2A7B9D82-3956-4B27-8395-A117A4C67DF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2A7B9D82-3956-4B27-8395-A117A4C67DF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A7B9D82-3956-4B27-8395-A117A4C67DF5}.LinuxRelease|Any CPU.ActiveCfg = LinuxRelease|Any CPU
+		{2A7B9D82-3956-4B27-8395-A117A4C67DF5}.LinuxRelease|Any CPU.Build.0 = LinuxRelease|Any CPU
 		{2A7B9D82-3956-4B27-8395-A117A4C67DF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A7B9D82-3956-4B27-8395-A117A4C67DF5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{53E0EAAD-F3D2-43B2-9757-81F2332C3E0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{53E0EAAD-F3D2-43B2-9757-81F2332C3E0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53E0EAAD-F3D2-43B2-9757-81F2332C3E0F}.LinuxRelease|Any CPU.ActiveCfg = LinuxRelease|Any CPU
+		{53E0EAAD-F3D2-43B2-9757-81F2332C3E0F}.LinuxRelease|Any CPU.Build.0 = LinuxRelease|Any CPU
 		{53E0EAAD-F3D2-43B2-9757-81F2332C3E0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53E0EAAD-F3D2-43B2-9757-81F2332C3E0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
