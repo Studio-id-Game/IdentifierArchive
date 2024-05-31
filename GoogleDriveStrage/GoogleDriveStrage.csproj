@@ -52,8 +52,8 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Condition="'$(Configuration)'=='Release' or '$(Configuration)'=='Debug'" Command="PowerShell &quot;./post_win.ps1&quot; '$(TargetDir)' '$(ProjectDir)' '$(Configuration)/$(AssemblyName)_$(VersionPrefix)'" />
-		<Exec Condition="'$(Configuration)'=='LinuxRelease'" Command="pwsh &quot;./post_lin.ps1&quot; '$(TargetDir)' '$(ProjectDir)' '$(Configuration)/$(AssemblyName)_$(VersionPrefix)'" />
+		<Exec Condition="'$(Configuration)'=='Release' or '$(Configuration)'=='Debug'" Command="PowerShell &quot;./post.ps1&quot; '$(TargetDir)' '$(ProjectDir)' '$(Configuration)/Win/$(AssemblyName)_$(VersionPrefix)'" />
+		<Exec Condition="'$(Configuration)'=='LinuxRelease'" Command="pwsh &quot;./post.ps1&quot; '$(TargetDir)' '$(ProjectDir)' '$Release/Linux/$(AssemblyName)_$(VersionPrefix)'" />
 	</Target>
 
 </Project>
