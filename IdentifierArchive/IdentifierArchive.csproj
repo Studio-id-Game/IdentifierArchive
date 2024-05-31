@@ -21,6 +21,7 @@
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Configurations>Debug;Release;LinuxRelease</Configurations>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -50,7 +51,8 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="PowerShell &quot;./post.ps1&quot; &quot;$(TargetDir.Replace(&quot;\&quot;,&quot;/&quot;))&quot; &quot;$(ProjectDir.Replace(&quot;\&quot;,&quot;/&quot;))/../$(Configuration)/$(AssemblyName)_$(VersionPrefix)&quot;" />
+		<Exec Condition="'$(Configuration)'=='Release' or '$(Configuration)'=='Debug'" Command="PowerShell &quot;./post.ps1&quot; '$(TargetDir)' '$(ProjectDir)' '$(Configuration)/$(AssemblyName)_$(VersionPrefix)'" />
+		<Exec Condition="'$(Configuration)'=='LinuxRelease'" Command="pwsh &quot;./post.ps1&quot; '$(TargetDir)' '$(ProjectDir)' '$(Configuration)/$(AssemblyName)_$(VersionPrefix)'" />
 	</Target>
 
 </Project>

@@ -1,2 +1,10 @@
-echo "copy $Args[0] to $Args[1]"
-cp -r -Force -v $args[0] $args[1]
+param($TargetDir, $ProjectDir, $TargetName)
+
+$TargetDir = $($TargetDir).Replace("\","/");
+$ProjectDir = $($ProjectDir).Replace("\","/");
+$TargetName = $($TargetName).Replace("\","/");
+$CopyTo = "$($ProjectDir)/../$($TargetName)"
+
+echo "copy $($TargetDir) to $($CopyTo)"
+mkdir -p $($CopyTo)
+cp -r -v -force "$($TargetDir)/*" $($CopyTo)
