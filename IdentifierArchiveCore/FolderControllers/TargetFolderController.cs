@@ -34,6 +34,9 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
                 current.Text = args.Identifier;
             }
 
+            archive.FixIdentifier(0);
+            current.FixIdentifier(0);
+
             bool res = archive.ToFile(FolderInfo, out var created, out _, autoCreate: true, autoOverwrite: args.AutoFileOverwrite) || created;
             
             if (!res) return false;
