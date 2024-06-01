@@ -53,6 +53,11 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
 
             if (userInfo == null) return -1;
 
+            if (!ConsoleUtility.CheckFolder(FolderInfo))
+            {
+                return -1;
+            }
+
             var zipFileInfo = settings.GetZipFileInfo();
             if (zipFileInfo.Exists)
             {
