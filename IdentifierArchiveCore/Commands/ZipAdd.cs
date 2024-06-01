@@ -48,6 +48,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             var zipFolderController = new ZipFolderController(settingsWithOutIdentifier);
 
             var ret = zipFolderController.CreateZipFile(archiveIdentifier, args.AutoFileOverwrite, args.AutoIdentifierIncrement);
+
             if (ret < 0)
             {
                 return ret;
