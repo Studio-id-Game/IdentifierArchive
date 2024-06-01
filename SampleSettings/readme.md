@@ -11,7 +11,7 @@
 5. 7zipをインストールする
     - https://7-zip.opensource.jp/
     
-6. "IdentifierArchiveWork~\LocalKeys~\.localkey~"の、"%7z%"（7zipコマンドライン版のパス）と、"%7z.PassWord%"（圧縮暗号化に使うパスワード）を設定する。
+6. "IdentifierArchiveWork~\LocalKeys~\.localkey~"の、"%7z%"（7zipコマンドライン版のパス）と、"%7z.PassWord%"（暗号化に使うパスワード）を設定する。
 
 7. GoogleDriveへのリモートアクセスキーを設定する
     - https://www.ipentec.com/document/software-google-cloud-platform-enable-google-drive-api
@@ -36,3 +36,7 @@
 
 5. あとはいろいろ自分で試してみてね。
    - アーカイブのキャッシュは、デフォルトだと"D:\IdentifierArchiveCache~\%ProjectName%\%TARGET_FOLDER%\" にすべて保存されます。  
+
+# 注意点
+
+- 実行ファイル(%7z%や%GoogleDriveStrage%)の指定は、ファイルパスであれば引用符を含む事が推奨されますが、環境パスなどで実行ファイルを指定する場合は引用符を含むと正しく認識されません。
