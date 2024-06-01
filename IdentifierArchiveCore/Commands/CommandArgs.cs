@@ -329,23 +329,26 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             return true;
         }
 
-        public bool CheckRequire(CommandAction master, bool targetFolder = false, bool settingsFodler = false, bool identifier = false)
+        public bool CheckRequire(CommandAction master, bool settingsFodler = false, bool targetFolder = false, bool identifier = false)
         {
             List<string> needs = [];
 
-            if (NotSet<ArgSettingsFolder>(settingsFodler, out var name))
+            CommandArg? arg = Get<ArgSettingsFolder>();
+            if (settingsFodler && arg?.ValueText == null)
             {
-                needs.Add(name);
+                needs.Add($"{arg?.Name} ({arg?.ArgID})");
             }
 
-            if (NotSet<ArgTargetFolder>(targetFolder, out name))
+            arg = Get<ArgTargetFolder>();
+            if (targetFolder && arg?.ValueText == null)
             {
-                needs.Add(name);
+                needs.Add($"{arg?.Name} ({arg?.ArgID})");
             }
 
-            if (NotSet<ArgIdentifier>(identifier, out name))
+            arg = Get<ArgIdentifier>();
+            if (identifier && arg?.ValueText == null)
             {
-                needs.Add(name);
+                needs.Add($"{arg?.Name} ({arg?.ArgID})");
             }
 
             if (needs.Count > 0)
@@ -357,13 +360,6 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             {
                 return true;
             }
-        }
-
-        public bool NotSet<T>(bool check, out string name) where T : CommandArg, new()
-        {
-            var arg = new T();
-            name = $"{arg.Name} ({arg.ArgID})";
-            return check && GetText<ArgTargetFolder>() == null;
         }
 
         public CommandArgs Copy()

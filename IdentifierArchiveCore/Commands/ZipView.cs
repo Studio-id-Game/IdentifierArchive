@@ -17,7 +17,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
         {
             base.Excute(args);
 
-            if (!args.CheckRequire(this, settingsFodler: true, targetFolder:true))
+            if (!args.CheckRequire(this, settingsFodler: true, targetFolder: true))
             {
                 return -1;
             }
