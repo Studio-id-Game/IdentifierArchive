@@ -1,13 +1,10 @@
-﻿using System.ComponentModel.Design;
-using System.Linq.Expressions;
-
-namespace StudioIdGames.IdentifierArchiveCore.Commands
+﻿namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
     public abstract class CommandArg
     {
         public CommandArg() { }
 
-        public CommandArg(CommandArg sauce) 
+        public CommandArg(CommandArg sauce)
         {
             ValueText = sauce.ValueText;
             ValueFlag = sauce.ValueFlag;
@@ -56,7 +53,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             var inputArgName = argSp[0].Trim(' ', '\n', '\r', '\t');
 
             var readed = StringComparer.Ordinal.Equals(inputArgName, ArgID);
-            
+
             if (readed)
             {
                 Value = argSp.ElementAtOrDefault(1);

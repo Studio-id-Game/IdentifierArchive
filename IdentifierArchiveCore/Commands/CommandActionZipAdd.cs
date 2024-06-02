@@ -1,6 +1,5 @@
 ﻿using StudioIdGames.IdentifierArchiveCore.Files;
 using StudioIdGames.IdentifierArchiveCore.FolderControllers;
-using System.IO;
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
@@ -33,7 +32,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             }
 
             archiveIdentifier.FixIdentifier(0);
-            
+
             var settingsWithOutIdentifier = settingsFolderController.GetSettingsFile();
 
             if (settingsWithOutIdentifier == null)

@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography.X509Certificates;
-
-namespace StudioIdGames.IdentifierArchiveCore.Commands
+﻿namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
     public class CommandArgs
     {
@@ -29,9 +27,9 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
             definedArgs.Add(() => new T());
         }
-        
+
         private readonly CommandArg[] commandArgs;
-        
+
         public CommandArgs()
         {
             commandArgs = definedArgs.Select(e => e()).ToArray();
@@ -51,7 +49,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
         {
             foreach (var arg in commandArgs)
             {
-                if(arg is T ret) return ret; 
+                if (arg is T ret) return ret;
             }
 
             return null;
@@ -219,9 +217,9 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    if(i != 0)
+                    if (i != 0)
                     {
-                        Console.WriteLine($"Continue {i+1}/3");
+                        Console.WriteLine($"Continue {i + 1}/3");
                     }
                     arg = interactive(arg);
                     if (check(arg))

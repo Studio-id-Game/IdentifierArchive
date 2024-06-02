@@ -2,7 +2,7 @@
 
 namespace StudioIdGames.IdentifierArchiveCore.Files
 {
-    public sealed class JsonFileController<TData> : FileController<TData, JsonFileController<TData>> 
+    public sealed class JsonFileController<TData> : FileController<TData, JsonFileController<TData>>
         where TData : JsonFileObject<TData>
     {
         public override TData? FromBytes(byte[]? bytes)

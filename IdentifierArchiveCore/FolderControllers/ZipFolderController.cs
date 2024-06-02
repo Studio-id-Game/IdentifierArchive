@@ -98,10 +98,10 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
             var metaFile = new UserInfoFile() { CustomFileName = settings.Identifier! };
             metaFile.CopyFrom(userInfo);
 
-            if(metaFile.ToFile(FolderInfo, out _, out _, true, false))
+            if (metaFile.ToFile(FolderInfo, out _, out _, true, false))
             {
                 var metaFileData = metaFile.FromFile(FolderInfo)!;
-                if(!CheckUser(metaFileData, userInfo))
+                if (!CheckUser(metaFileData, userInfo))
                 {
                     Console.WriteLine($"UserName: {userInfo.UserName}, UserID: {userInfo.UserID}");
                     Console.WriteLine($"File owner UserName: {metaFileData.UserName}, File owner UserID: {metaFileData.UserID}");

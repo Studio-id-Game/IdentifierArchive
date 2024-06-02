@@ -1,8 +1,4 @@
-﻿using System.Globalization;
-using System.IO.Compression;
-using System.Reflection;
-using System.Runtime.Serialization;
-using Utf8Json;
+﻿using System.Runtime.Serialization;
 
 namespace StudioIdGames.IdentifierArchiveCore.Files
 {
@@ -56,7 +52,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
         /// <summary>
         /// %DOWNLOAD_FILE% が表すファイルを、%TARGET_FOLDER% から一意に定まるクラウドストレージフォルダからダウンロードするコマンド
         /// </summary>
-        public string DownloadCommand { get;set; } = $"%GoogleDriveStrage% d {LOCALKEY_FOLDER_ABS}\\%GoogleDriveStrage.KeyFileName% %GoogleDriveStrage.RootFolderID% {TARGET_FOLDER.Path} {DOWNLOAD_FILE}";
+        public string DownloadCommand { get; set; } = $"%GoogleDriveStrage% d {LOCALKEY_FOLDER_ABS}\\%GoogleDriveStrage.KeyFileName% %GoogleDriveStrage.RootFolderID% {TARGET_FOLDER.Path} {DOWNLOAD_FILE}";
 
         /// <summary>
         /// Gitの実行ファイルにアクセスするためのパス
@@ -117,13 +113,13 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
 
         private void ReplaceSettingsPath(DirectoryInfo settingsFolderInfo)
         {
-            if(SafeView == null)
+            if (SafeView == null)
             {
                 SafeView = new();
                 SafeView.CopyFrom(this);
             }
 
-            if(SettingsFolderInfo == null)
+            if (SettingsFolderInfo == null)
             {
                 var settingsFileInfo = new FileInfo($"{settingsFolderInfo}/{FileName}");
 
@@ -151,7 +147,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
 
             if (TargetFolderInfo == null)
             {
-                if(SettingsFolderInfo != null)
+                if (SettingsFolderInfo != null)
                 {
                     var targetFolderPathInfo = new PathIdentityInfo<DirectoryInfo>(targetFolderInfo, SettingsFolderInfo);
                     TargetFolderInfo = targetFolderInfo;
@@ -237,9 +233,9 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
             if (targetFolderInfo != null)
             {
                 file.ReplaceTargetPath(targetFolderInfo);
-            } 
+            }
 
-            if(identifier != null)
+            if (identifier != null)
             {
                 file.ReplaceIdentifier(identifier);
             }
@@ -261,7 +257,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
             SafeView = other.SafeView;
             SettingsFolderInfo = other.SettingsFolderInfo;
             TargetFolderInfo = other.TargetFolderInfo;
-            Identifier = other.Identifier;  
+            Identifier = other.Identifier;
             LocalKeyFile = other.LocalKeyFile;
             IsZipPathReplaced = other.IsZipPathReplaced;
         }

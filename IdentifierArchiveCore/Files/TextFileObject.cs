@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using System.Text;
 
 namespace StudioIdGames.IdentifierArchiveCore.Files
 {

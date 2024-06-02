@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Runtime.Serialization;
-using Utf8Json;
+﻿using System.Runtime.Serialization;
 
 namespace StudioIdGames.IdentifierArchiveCore.Files
 {
@@ -13,7 +11,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
 
         [IgnoreDataMember]
         public override string ScreenName => ScreenNameStatic;
-        
+
         [IgnoreDataMember]
         public override string FileName => FileNameStatic;
 

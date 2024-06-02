@@ -1,5 +1,4 @@
 ﻿using StudioIdGames.IdentifierArchiveCore.Commands;
-using System;
 using System.Diagnostics;
 
 namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
@@ -163,8 +162,8 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
         public int GitFileNameList(string gitExePath, out IEnumerable<string>? gitFileNames, out IEnumerable<string>? ignoredFileNames, bool showInfo = true)
         {
             var ret = GitFileList(gitExePath, out var gitFiles, out var ignoredFiles, showInfo);
-            
-            if(ret < 0)
+
+            if (ret < 0)
             {
                 gitFileNames = [];
                 ignoredFileNames = [];
