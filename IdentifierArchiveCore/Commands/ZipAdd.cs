@@ -29,7 +29,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
             if (string.IsNullOrWhiteSpace(args.Identifier))
             {
-                archiveIdentifier.FixIdentifier(1);
+                archiveIdentifier.FixIdentifier(0);
             }
             else
             {
@@ -47,7 +47,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
             var zipFolderController = new ZipFolderController(settingsWithOutIdentifier);
 
-            var ret = zipFolderController.CreateZipFile(archiveIdentifier, args.AutoFileOverwrite, args.AutoIdentifierIncrement);
+            var ret = zipFolderController.CreateZipFile(archiveIdentifier, args);
 
             if (ret < 0)
             {

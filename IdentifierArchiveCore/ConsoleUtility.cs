@@ -47,7 +47,7 @@ namespace StudioIdGames.IdentifierArchiveCore
             ProcessStartInfo process_start_info = new()
             {
                 FileName = "cmd",
-                Arguments = "/c " + command,
+                Arguments = $" \"/c\" {command}",
                 CreateNoWindow = true,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
@@ -287,7 +287,6 @@ namespace StudioIdGames.IdentifierArchiveCore
             if (needs.Length == 0) return;
             if (needs.Length == 1)
             {
-                
                 Console.WriteLine($"{master} needs {needs[0]} {needType}.\n");
             }
             else
