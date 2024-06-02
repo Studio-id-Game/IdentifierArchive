@@ -5,11 +5,11 @@ using Utf8Json;
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
-    public class SettingsView : CommandAction
+    public class CommandActionSettingsView : CommandAction
     {
-        public static SettingsView Instance { get; } = new SettingsView();
+        public static CommandActionSettingsView Instance { get; } = new CommandActionSettingsView();
 
-        private SettingsView() { }
+        private CommandActionSettingsView() { }
 
         public override string CommandID => "sv";
 

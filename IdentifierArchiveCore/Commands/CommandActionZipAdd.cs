@@ -4,11 +4,11 @@ using System.IO;
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
-    public class ZipAdd : CommandAction
+    public class CommandActionZipAdd : CommandAction
     {
-        public static ZipAdd Instance { get; } = new ZipAdd();
+        public static CommandActionZipAdd Instance { get; } = new CommandActionZipAdd();
 
-        private ZipAdd() { }
+        private CommandActionZipAdd() { }
 
         public override string CommandID => "za";
 
@@ -27,23 +27,21 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             var targetFolderController = new TargetFolderController(settingsFolderController, args.TargetFolder!);
             var archiveIdentifier = targetFolderController.GetArchiveIdentifier(true) ?? new IdentifierFile(IdentifierFileType.Archive);
 
-            if (string.IsNullOrWhiteSpace(args.Identifier))
-            {
-                archiveIdentifier.FixIdentifier(0);
-            }
-            else
+            if (!string.IsNullOrWhiteSpace(args.Identifier))
             {
                 archiveIdentifier.Text = args.Identifier;
-                archiveIdentifier.FixIdentifier(0);
             }
 
-            var settingsWithOutIdentifier = settingsFolderController.GetSettingsFile()?
-                .GetReplaced(targetFolderInfo: targetFolderController.FolderInfo);
+            archiveIdentifier.FixIdentifier(0);
+            
+            var settingsWithOutIdentifier = settingsFolderController.GetSettingsFile();
 
             if (settingsWithOutIdentifier == null)
             {
                 return -1;
             }
+
+            settingsWithOutIdentifier = settingsWithOutIdentifier.GetReplaced(targetFolderInfo: targetFolderController.FolderInfo);
 
             var zipFolderController = new ZipFolderController(settingsWithOutIdentifier);
 

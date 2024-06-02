@@ -2,11 +2,11 @@
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
-    public class TargetView : CommandAction
+    public class CommandActionTargetView : CommandAction
     {
-        public static TargetView Instance { get; } = new TargetView();
+        public static CommandActionTargetView Instance { get; } = new CommandActionTargetView();
 
-        private TargetView() { }
+        private CommandActionTargetView() { }
 
         public override string CommandID => "tv";
 

@@ -9,19 +9,19 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
         static CommandActions()
         {
-            AddCommand(SettingsInit.Instance);
-            AddCommand(SettingsView.Instance);
-            AddCommand(TargetInit.Instance);
-            AddCommand(TargetView.Instance);
-            AddCommand(ZipAdd.Instance);
-            AddCommand(ZipExtract.Instance);
-            AddCommand(ZipClear.Instance);
-            AddCommand(ZipView.Instance);
-            AddCommand(RemoteUpload.Instance);
-            AddCommand(RemoteDownload.Instance);
+            Use(CommandActionSettingsInit.Instance);
+            Use(CommandActionSettingsView.Instance);
+            Use(CommandActionTargetInit.Instance);
+            Use(CommandActionTargetView.Instance);
+            Use(CommandActionZipAdd.Instance);
+            Use(CommandActionZipExtract.Instance);
+            Use(CommandActionZipClear.Instance);
+            Use(CommandActionZipView.Instance);
+            Use(CommandActionRemoteUpload.Instance);
+            Use(CommandActionRemoteDownload.Instance);
         }
 
-        public static void AddCommand<T>(T action) where T : CommandAction
+        public static void Use<T>(T action) where T : CommandAction
         {
             definedActions.Add(action.Name, action);
             definedActions.Add(action.CommandID, action);

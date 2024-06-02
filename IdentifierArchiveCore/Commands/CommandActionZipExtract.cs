@@ -3,11 +3,11 @@ using StudioIdGames.IdentifierArchiveCore.FolderControllers;
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
-    public class ZipExtract : CommandAction
+    public class CommandActionZipExtract : CommandAction
     {
-        public static ZipExtract Instance { get; } = new ZipExtract();
+        public static CommandActionZipExtract Instance { get; } = new CommandActionZipExtract();
 
-        private ZipExtract() { }
+        private CommandActionZipExtract() { }
 
         public override string CommandID => "zx";
 

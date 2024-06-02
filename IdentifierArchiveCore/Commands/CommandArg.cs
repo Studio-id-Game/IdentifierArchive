@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.Design;
+using System.Linq.Expressions;
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
@@ -17,9 +18,35 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
         public abstract string ArgID { get; }
 
-        public virtual string? ValueText { get; set; }
+        public string? Value { get; set; } = "";
 
-        public virtual bool? ValueFlag { get; set; }    
+        public virtual string? ValueText
+        {
+            get => string.IsNullOrWhiteSpace(Value) ? null : Value;
+            set
+            {
+                Value = value;
+            }
+        }
+
+        public virtual bool? ValueFlag
+        {
+            get => Value switch
+            {
+                "true" or null => true,
+                "false" or "!" => false,
+                "null" or "" or _ => null,
+            };
+            set
+            {
+                Value = value switch
+                {
+                    true => null,
+                    false => "!",
+                    null => "",
+                };
+            }
+        }
 
         public bool IsReaded { get; private set; }
 
@@ -32,14 +59,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             
             if (readed)
             {
-                var value = argSp.ElementAtOrDefault(1);
-                ValueText = string.IsNullOrWhiteSpace(value) ? null : value;
-                ValueFlag = value switch
-                {
-                    "true" or null => true,
-                    "false" or "!" => false,
-                    "null" or "" or _ => null,
-                };
+                Value = argSp.ElementAtOrDefault(1);
             }
 
             IsReaded |= readed;
