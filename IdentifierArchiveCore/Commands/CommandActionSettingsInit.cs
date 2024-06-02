@@ -3,11 +3,11 @@ using StudioIdGames.IdentifierArchiveCore.FolderControllers;
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
-    public class SettingsInit : CommandAction
+    public class CommandActionSettingsInit : CommandAction
     {
-        public static SettingsInit Instance { get; } = new SettingsInit();
+        public static CommandActionSettingsInit Instance { get; } = new CommandActionSettingsInit();
 
-        private SettingsInit() { }
+        private CommandActionSettingsInit() { }
 
         public override string CommandID => "si";
 

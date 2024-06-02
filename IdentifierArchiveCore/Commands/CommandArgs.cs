@@ -1,200 +1,22 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel.Design;
-using System.Xml.Linq;
-using static StudioIdGames.IdentifierArchiveCore.Commands.CommandArgs;
-using System.Linq;
-
-namespace StudioIdGames.IdentifierArchiveCore.Commands
+﻿namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
     public class CommandArgs
     {
-        public class ArgTargetFolder : CommandArg
-        {
-            public ArgTargetFolder() { }
-
-            public ArgTargetFolder(ArgTargetFolder sauce) : base(sauce) { }
-
-            public override string Name => $"-{nameof(ArgTargetFolder)}";
-
-            public override string ArgID => "-tf";
-
-            public override CommandArg Copy()
-            {
-                return new ArgTargetFolder(this);
-            }
-
-            public override string ToString()
-            {
-                return ToStringAsText();
-            }
-        }
-
-        public class ArgSettingsFolder : CommandArg
-        {
-            public ArgSettingsFolder() { }
-
-            public ArgSettingsFolder(ArgSettingsFolder sauce) : base(sauce) { }
-
-            public override string Name => $"-{nameof(ArgSettingsFolder)}";
-
-            public override string ArgID => "-sf";
-
-            public override CommandArg Copy()
-            {
-                return new ArgSettingsFolder(this);
-            }
-            public override string ToString()
-            {
-                return ToStringAsText();
-            }
-        }
-
-        public class ArgIdentifier : CommandArg
-        {
-            public ArgIdentifier() { }
-
-            public ArgIdentifier(ArgIdentifier sauce) : base(sauce) { }
-
-            public override string Name => $"-{nameof(ArgIdentifier)}";
-
-            public override string ArgID => "-id";
-
-            public override CommandArg Copy()
-            {
-                return new ArgIdentifier(this);
-            }
-            public override string ToString()
-            {
-                return ToStringAsText();
-            }
-        }
-
-        public class ArgUserName : CommandArg
-        {
-            public ArgUserName() { }
-
-            public ArgUserName(ArgUserName sauce) : base(sauce) { }
-
-            public override string Name => $"-{nameof(ArgUserName)}";
-
-            public override string ArgID => "-username";
-
-            public override CommandArg Copy()
-            {
-                return new ArgUserName(this);
-            }
-
-            public override string ToString()
-            {
-                return ToStringAsText();
-            }
-        }
-
-        public class ArgAutoFolderCreate : CommandArg
-        {
-            public ArgAutoFolderCreate() { }
-
-            public ArgAutoFolderCreate(ArgAutoFolderCreate sauce) : base(sauce) { }
-
-            public override string Name => $"-{nameof(ArgAutoFolderCreate)}";
-
-            public override string ArgID => "-auto-folder-c";
-
-            public override CommandArg Copy()
-            {
-                return new ArgAutoFolderCreate(this);
-            }
-
-            public override string ToString()
-            {
-                return ToStringAsFlag();
-            }
-        }
-
-        public class ArgAutoFileOverwrite : CommandArg
-        {
-            public ArgAutoFileOverwrite() { }
-
-            public ArgAutoFileOverwrite(ArgAutoFileOverwrite sauce) : base(sauce) { }
-
-            public override string Name => $"-{nameof(ArgAutoFileOverwrite)}";
-
-            public override string ArgID => "-auto-file-ow";
-
-            public override CommandArg Copy()
-            {
-                return new ArgAutoFileOverwrite(this);
-            }
-
-            public override string ToString()
-            {
-                return ToStringAsFlag();
-            }
-        }
-
-        public class ArgAutoIdentifierIncrement : CommandArg
-        {
-            public ArgAutoIdentifierIncrement() { }
-
-            public ArgAutoIdentifierIncrement(ArgAutoIdentifierIncrement sauce) : base(sauce) { }
-
-            public override string Name => $"-{nameof(ArgAutoIdentifierIncrement)}";
-
-            public override string ArgID => "-auto-id-incr";
-
-            public override CommandArg Copy()
-            {
-                return new ArgAutoIdentifierIncrement(this);
-            }
-
-            public override string ToString()
-            {
-                return ToStringAsFlag();
-            }
-        }
-
-        public class ArgUnSafe : CommandArg
-        {
-            public ArgUnSafe() { }
-
-            public ArgUnSafe(ArgUnSafe sauce) : base(sauce) { }
-
-            public override string? ValueText => null;
-
-            public override bool? ValueFlag => null;
-
-            public override string Name => "-UN-SAFE";
-
-            public override string ArgID => "-UN-SAFE";
-
-            public override CommandArg Copy()
-            {
-                return new ArgUnSafe(this);
-            }
-
-            public override string ToString()
-            {
-                return ToStringAsReaded();
-            }
-        }
-        
-
         private static readonly List<Func<CommandArg>> definedArgs = [];
 
         static CommandArgs()
         {
-            AddCommand<ArgTargetFolder>();
-            AddCommand<ArgSettingsFolder>();
-            AddCommand<ArgIdentifier>();
-            AddCommand<ArgUserName>();
-            AddCommand<ArgAutoFolderCreate>();
-            AddCommand<ArgAutoFileOverwrite>();
-            AddCommand<ArgAutoIdentifierIncrement>();
-            AddCommand<ArgUnSafe>();
+            Use<CommandArgTargetFolder>();
+            Use<CommandArgSettingsFolder>();
+            Use<CommandArgIdentifier>();
+            Use<CommandArgUserName>();
+            Use<CommandArgAutoFolderCreate>();
+            Use<CommandArgAutoFileOverwrite>();
+            Use<CommandArgAutoIdentifierIncrement>();
+            Use<CommandArgUnSafe>();
         }
 
-        public static void AddCommand<T>() where T : CommandArg, new()
+        public static void Use<T>() where T : CommandArg, new()
         {
             foreach (var arg in definedArgs)
             {
@@ -244,46 +66,46 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
         public string? TargetFolder
         {
-            get => GetText<ArgTargetFolder>();
-            set => Get<ArgTargetFolder>()!.ValueText = value;
+            get => GetText<CommandArgTargetFolder>();
+            set => Get<CommandArgTargetFolder>()!.ValueText = value;
         }
 
         public string? SettingsFolder
         {
-            get => GetText<ArgSettingsFolder>();
-            set => Get<ArgSettingsFolder>()!.ValueText = value;
+            get => GetText<CommandArgSettingsFolder>();
+            set => Get<CommandArgSettingsFolder>()!.ValueText = value;
         }
 
         public string? Identifier
         {
-            get => GetText<ArgIdentifier>();
-            set => Get<ArgIdentifier>()!.ValueText = value;
+            get => GetText<CommandArgIdentifier>();
+            set => Get<CommandArgIdentifier>()!.ValueText = value;
         }
 
         public string? UserName
         {
-            get => GetText<ArgUserName>();
-            set => Get<ArgUserName>()!.ValueText = value;
+            get => GetText<CommandArgUserName>();
+            set => Get<CommandArgUserName>()!.ValueText = value;
         }
 
         public bool? AutoFolderCreate
         {
-            get => GetFlag<ArgAutoFolderCreate>();
+            get => GetFlag<CommandArgAutoFolderCreate>();
         }
 
         public bool? AutoFileOverwrite
         {
-            get => GetFlag<ArgAutoFileOverwrite>();
+            get => GetFlag<CommandArgAutoFileOverwrite>();
         }
 
         public bool? AutoIdentifierIncrement
         {
-            get => GetFlag<ArgAutoIdentifierIncrement>();
+            get => GetFlag<CommandArgAutoIdentifierIncrement>();
         }
 
         public bool UnSafe
         {
-            get => GetReaded<ArgUnSafe>();
+            get => GetReaded<CommandArgUnSafe>();
         }
 
         public bool GetReaded<T>() where T : CommandArg
@@ -333,22 +155,19 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
         {
             List<string> needs = [];
 
-            CommandArg? arg = Get<ArgSettingsFolder>();
-            if (settingsFodler && arg?.ValueText == null)
+            if (settingsFodler && !CheckRequire<CommandArgSettingsFolder>(out var sfArg, arg => arg.ValueText == null))
             {
-                needs.Add($"{arg?.Name} ({arg?.ArgID})");
+                needs.Add($"{sfArg?.Name} ({sfArg?.ArgID})");
             }
 
-            arg = Get<ArgTargetFolder>();
-            if (targetFolder && arg?.ValueText == null)
+            if (targetFolder && !CheckRequire<CommandArgTargetFolder>(out var tfArg, arg => arg.ValueText == null))
             {
-                needs.Add($"{arg?.Name} ({arg?.ArgID})");
+                needs.Add($"{tfArg?.Name} ({tfArg?.ArgID})");
             }
 
-            arg = Get<ArgIdentifier>();
-            if (identifier && arg?.ValueText == null)
+            if (identifier && !CheckRequire<CommandArgIdentifier>(out var idArg, arg => arg.ValueText == null))
             {
-                needs.Add($"{arg?.Name} ({arg?.ArgID})");
+                needs.Add($"{idArg?.Name} ({idArg?.ArgID})");
             }
 
             if (needs.Count > 0)
@@ -360,6 +179,12 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             {
                 return true;
             }
+        }
+
+        public bool CheckRequire<T>(out T? arg, Func<T, bool> check) where T : CommandArg
+        {
+            arg = Get<T>();
+            return arg != null && check(arg);
         }
 
         public CommandArgs Copy()

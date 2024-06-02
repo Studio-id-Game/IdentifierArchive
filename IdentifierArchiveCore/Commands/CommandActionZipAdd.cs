@@ -4,11 +4,11 @@ using System.IO;
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
-    public class ZipAdd : CommandAction
+    public class CommandActionZipAdd : CommandAction
     {
-        public static ZipAdd Instance { get; } = new ZipAdd();
+        public static CommandActionZipAdd Instance { get; } = new CommandActionZipAdd();
 
-        private ZipAdd() { }
+        private CommandActionZipAdd() { }
 
         public override string CommandID => "za";
 

@@ -2,11 +2,11 @@
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
-    public class TargetInit : CommandAction
+    public class CommandActionTargetInit : CommandAction
     {
-        public static TargetInit Instance { get; } = new TargetInit();
+        public static CommandActionTargetInit Instance { get; } = new CommandActionTargetInit();
 
-        private TargetInit() { }
+        private CommandActionTargetInit() { }
 
         public override string CommandID => "ti";
 

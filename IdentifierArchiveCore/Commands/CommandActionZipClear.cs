@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
-    public class ZipClear : CommandAction
+    public class CommandActionZipClear : CommandAction
     {
-        public static ZipClear Instance { get; } = new ZipClear();
+        public static CommandActionZipClear Instance { get; } = new CommandActionZipClear();
 
-        private ZipClear() { }
+        private CommandActionZipClear() { }
 
         public override string CommandID => "zc";
 

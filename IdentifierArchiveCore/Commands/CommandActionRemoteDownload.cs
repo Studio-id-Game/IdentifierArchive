@@ -1,17 +1,16 @@
-﻿using StudioIdGames.IdentifierArchiveCore.Files;
-using StudioIdGames.IdentifierArchiveCore.FolderControllers;
+﻿using StudioIdGames.IdentifierArchiveCore.FolderControllers;
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
-    public class RemoteUpload : CommandAction
+    public class CommandActionRemoteDownload : CommandAction
     {
-        public static RemoteUpload Instance { get; } = new RemoteUpload();
+        public static CommandActionRemoteDownload Instance { get; } = new CommandActionRemoteDownload();
 
-        private RemoteUpload() { }
+        private CommandActionRemoteDownload() { }
 
-        public override string CommandID => "ul";
+        public override string CommandID => "dl";
 
-        public override string Name => "Upload-To-Remote";
+        public override string Name => "Download-From-Remote";
 
         public override int Excute(CommandArgs args)
         {
@@ -25,7 +24,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             var settingsFolderController = new SettingsFolderController(args.SettingsFolder!);
 
             var targetFolderController = new TargetFolderController(settingsFolderController, args.TargetFolder!);
-            var identifier = string.IsNullOrWhiteSpace(args.Identifier) ? targetFolderController.GetCurrentIdentifier(true)?.Text : args.Identifier;
+            var identifier = string.IsNullOrWhiteSpace(args.Identifier) ? targetFolderController.GetArchiveIdentifier(true)?.Text : args.Identifier;
 
             if (identifier == null)
             {
@@ -35,7 +34,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
             if (identifier == ZipFolderController.BackupIdentifier)
             {
-                Console.WriteLine("Backup archive files cannot be uploaded.\n");
+                Console.WriteLine("Backup archive files cannot be downloaded.\n");
             }
 
             var settingsWithOutIdentifier = settingsFolderController.GetSettingsFile()
@@ -48,7 +47,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
             var zipFolderController = new ZipFolderController(settingsWithOutIdentifier);
 
-            return zipFolderController.UploadZipFile(identifier);
+            return zipFolderController.DownloadZipFile(identifier, args.AutoFileOverwrite);
         }
     }
 }
