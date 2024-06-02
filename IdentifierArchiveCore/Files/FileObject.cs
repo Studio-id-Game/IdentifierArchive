@@ -1,5 +1,4 @@
 ﻿using System.Runtime.Serialization;
-using System.Text;
 
 namespace StudioIdGames.IdentifierArchiveCore.Files
 {
@@ -51,7 +50,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
         public bool CreateOrUpdate(DirectoryInfo directoryInfo)
         {
             var exists = ToFile(directoryInfo, out bool created, out bool overwrited, autoCreate: true, autoOverwrite: true, backupToRecycleBin: false);
-            if(exists) 
+            if (exists)
             {
                 return overwrited;
             }

@@ -1,10 +1,5 @@
 ﻿using Microsoft.VisualBasic.FileIO;
-using StudioIdGames.IdentifierArchiveCore.Commands;
-using StudioIdGames.IdentifierArchiveCore.Files;
 using System.Diagnostics;
-using System.Drawing;
-using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace StudioIdGames.IdentifierArchiveCore
 {
@@ -177,7 +172,7 @@ namespace StudioIdGames.IdentifierArchiveCore
                 }
             }
 
-            return exists; 
+            return exists;
         }
 
         public static bool CheckFolder(DirectoryInfo info)

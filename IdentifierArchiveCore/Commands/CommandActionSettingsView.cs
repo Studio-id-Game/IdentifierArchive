@@ -1,7 +1,4 @@
-﻿using StudioIdGames.IdentifierArchiveCore.Files;
-using StudioIdGames.IdentifierArchiveCore.FolderControllers;
-using System.Text;
-using Utf8Json;
+﻿using StudioIdGames.IdentifierArchiveCore.FolderControllers;
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {

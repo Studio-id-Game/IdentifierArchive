@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace StudioIdGames.IdentifierArchiveCore.Files
+﻿namespace StudioIdGames.IdentifierArchiveCore.Files
 {
     public sealed class GitignoreFile(GitignoreFileType type) : TextFileObject<GitignoreFile>
     {

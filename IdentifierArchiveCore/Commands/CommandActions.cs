@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-
-namespace StudioIdGames.IdentifierArchiveCore.Commands
+﻿namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
     public class CommandActions : CommandAction
     {

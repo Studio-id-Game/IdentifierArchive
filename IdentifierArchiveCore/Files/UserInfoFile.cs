@@ -5,13 +5,13 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
     public class UserInfoFile : TextFileObject<UserInfoFile>
     {
         public override string ScreenName => "UserInfo";
-        
+
         public override string FileName => CustomFileName + ".userinfo";
 
         public string CustomFileName { get; init; } = "";
 
         [IgnoreDataMember]
-        public string UserName 
+        public string UserName
         {
             get => Text.Split('\n')[0];
             set
@@ -29,7 +29,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
             set
             {
                 var sp = Text.Split('\n');
-                if(sp.Length > 1) 
+                if (sp.Length > 1)
                 {
                     sp[1] = value;
                 }

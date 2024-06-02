@@ -1,5 +1,4 @@
-﻿using StudioIdGames.IdentifierArchiveCore.Files;
-using StudioIdGames.IdentifierArchiveCore.FolderControllers;
+﻿using StudioIdGames.IdentifierArchiveCore.FolderControllers;
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {

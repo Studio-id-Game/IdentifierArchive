@@ -30,7 +30,7 @@ namespace StudioIdGames.DevTools.LicenseHunter
 
         static readonly DirectoryInfo ExportDirInfo = new("./exports");
         static readonly DirectoryInfo LicenseDirectoryInfo = new($"{ExportDirInfo.FullName}/licenses/");
-        static readonly FileInfo ListJsonFileInfo= new($"{ExportDirInfo.FullName}/output.json");
+        static readonly FileInfo ListJsonFileInfo = new($"{ExportDirInfo.FullName}/output.json");
         static readonly string CommandExportLicense = $"-i {TARGET} -t -f {LicenseDirectoryInfo.FullName} --export-license-texts --convert-html-to-text --use-project-assets-json";
         static readonly string CommandExportListJson = $"-i {TARGET} -o -j -t --outfile {ListJsonFileInfo.FullName} --use-project-assets-json";
 
@@ -70,7 +70,7 @@ namespace StudioIdGames.DevTools.LicenseHunter
         private static int Init(string settingsPath)
         {
             var settingsFileInfo = new FileInfo(settingsPath);
-            SettingsFile settingsFile; 
+            SettingsFile settingsFile;
             if (settingsFileInfo.Exists)
             {
                 settingsFile = JsonSerializer.Deserialize<SettingsFile>(File.ReadAllBytes(settingsFileInfo.FullName));
@@ -154,7 +154,7 @@ namespace StudioIdGames.DevTools.LicenseHunter
                     Console.WriteLine($"Excute : {DotnetProjectLicenses} {commandExportListJson}");
                     var commandExportListJsonRes = await ExcuteCommandAsync(DotnetProjectLicenses, commandExportListJson);
                     Console.WriteLine($"ExitCode:{commandExportListJsonRes}");
-                    if(commandExportListJsonRes < 0) return -1;
+                    if (commandExportListJsonRes < 0) return -1;
 
                     var listJsonFile = File.ReadAllBytes(ListJsonFileInfo.FullName);
                     File.WriteAllBytes(ListJsonFileInfo.FullName, JsonSerializer.PrettyPrintByteArray(listJsonFile));
@@ -164,7 +164,7 @@ namespace StudioIdGames.DevTools.LicenseHunter
                     var outputList = new List<NugetUtility.LibraryInfo>();
 
                     Console.WriteLine("LICENSES :");
-                    foreach ( var item in listJson)
+                    foreach (var item in listJson)
                     {
                         if (settingsFile.IgnoreLicenseType.Contains(item.LicenseType))
                         {
@@ -179,7 +179,7 @@ namespace StudioIdGames.DevTools.LicenseHunter
                         else
                         {
                             Console.WriteLine($"\t{item.PackageName}_{item.PackageVersion} | {item.LicenseType}");
-                            if(outputList.All(e => e.PackageName != item.PackageName || e.PackageVersion != item.PackageVersion))
+                            if (outputList.All(e => e.PackageName != item.PackageName || e.PackageVersion != item.PackageVersion))
                             {
                                 outputList.Add(item);
                                 var licenseFileInfo = new FileInfo($"{LicenseDirectoryInfo.FullName}\\{item.PackageName}_{item.PackageVersion}.txt");
@@ -191,7 +191,7 @@ namespace StudioIdGames.DevTools.LicenseHunter
                         }
                     }
 
-                    if(update)
+                    if (update)
                     {
                         Console.WriteLine("Need Update Licenses.\n");
                         var commandExportLicenseRes = await ExcuteCommandAsync(DotnetProjectLicenses, commandExportLicense);

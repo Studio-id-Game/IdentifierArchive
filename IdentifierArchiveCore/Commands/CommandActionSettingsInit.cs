@@ -1,5 +1,4 @@
-﻿using StudioIdGames.IdentifierArchiveCore.Files;
-using StudioIdGames.IdentifierArchiveCore.FolderControllers;
+﻿using StudioIdGames.IdentifierArchiveCore.FolderControllers;
 
 namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
@@ -24,7 +23,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
             var folderController = new SettingsFolderController(args.SettingsFolder!);
 
-            if(!folderController.FolderSetup(args))
+            if (!folderController.FolderSetup(args))
             {
                 return -1;
             }

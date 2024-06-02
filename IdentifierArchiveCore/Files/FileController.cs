@@ -1,7 +1,4 @@
-﻿using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace StudioIdGames.IdentifierArchiveCore.Files
+﻿namespace StudioIdGames.IdentifierArchiveCore.Files
 {
     public abstract class FileController<TData>
     {
@@ -81,9 +78,9 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
         }
     }
 
-    public abstract class FileController<TData, TSelf> : FileController<TData> 
+    public abstract class FileController<TData, TSelf> : FileController<TData>
         where TSelf : FileController<TData, TSelf>, new()
-    { 
+    {
         public static TSelf Instance { get; } = new TSelf();
     }
 }

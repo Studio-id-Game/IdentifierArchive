@@ -6,7 +6,7 @@
     {
         public sealed override TData? FromBytes(byte[]? bytes)
         {
-            if(bytes == null) return null;
+            if (bytes == null) return null;
             return new TData() { Text = TextFileObject<TData>.DefaultEncoding.GetString(bytes) };
         }
 

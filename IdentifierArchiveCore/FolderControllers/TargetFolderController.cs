@@ -42,7 +42,7 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
             if (!exists && !created) return false;
 
             exists = current.ToFile(FolderInfo, out created, out _, autoCreate: true, autoOverwrite: args.AutoFileOverwrite);
-            
+
             if (!exists && !created) return false;
 
             exists = gitignore.ToFile(FolderInfo, out created, out _, autoCreate: true, autoOverwrite: args.AutoFileOverwrite);
