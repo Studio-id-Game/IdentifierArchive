@@ -63,11 +63,7 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
             {
                 Console.WriteLine($"File is exists. ({zipFileInfo.FullName})");
 
-                if (ConsoleUtility.Question("Overwrite this file?", args.AutoFileOverwrite))
-                {
-                    ConsoleUtility.DeleteFile(zipFileInfo, [], true);
-                }
-                else
+                if (ConsoleUtility.Question($"Increment identifier?", args.AutoIdentifierIncrement))
                 {
                     var oldIdentifier = identifier.Text;
                     if (settingsWithOutIdentifier == null)
@@ -86,6 +82,14 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
                     {
                         return -1;
                     }
+                }
+                else if (ConsoleUtility.Question("Overwrite this file?", args.AutoFileOverwrite))
+                {
+                    ConsoleUtility.DeleteFile(zipFileInfo, [], true);
+                }
+                else
+                {
+                    return -1;
                 }
             }
 

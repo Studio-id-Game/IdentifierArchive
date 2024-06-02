@@ -18,7 +18,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
 
         public abstract string ArgID { get; }
 
-        public string? Value { get; set; }
+        public string? Value { get; set; } = "";
 
         public virtual string? ValueText
         {

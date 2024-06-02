@@ -188,7 +188,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Files
 
                 SafeView.Identifier = identifier;
                 SafeView.Replace(IDENTIFIER, identifier);
-                SafeView.Replace(ZIP_FILE_ABS, SafeView.GetZipFileInfo().FullName);
+                SafeView.Replace(ZIP_FILE_ABS, SafeView.ZipFolderAbsolute);
             }
             else
             {

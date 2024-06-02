@@ -47,7 +47,7 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
         }
 
 
-        public T? Get<T>() where T : CommandArg
+        protected T? Get<T>() where T : CommandArg
         {
             foreach (var arg in commandArgs)
             {
@@ -57,12 +57,12 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
             return null;
         }
 
-        public string? GetText<T>() where T : CommandArg
+        protected string? GetText<T>() where T : CommandArg
         {
             return Get<T>()?.ValueText;
         }
 
-        public bool? GetFlag<T>() where T : CommandArg
+        protected bool? GetFlag<T>() where T : CommandArg
         {
             return Get<T>()?.ValueFlag;
         }
