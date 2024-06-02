@@ -8,7 +8,7 @@
 
         public override string? ValueText => null;
 
-        public override bool? ValueFlag => null;
+        public override bool? ValueFlag => false;
 
         public override string Name => "--UN-SAFE";
 

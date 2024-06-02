@@ -1,4 +1,6 @@
-﻿namespace StudioIdGames.IdentifierArchiveCore.Commands
+﻿using System.Security.Cryptography.X509Certificates;
+
+namespace StudioIdGames.IdentifierArchiveCore.Commands
 {
     public class CommandArgs
     {
@@ -14,6 +16,7 @@
             Use<CommandArgAutoFileOverwrite>();
             Use<CommandArgAutoIdentifierIncrement>();
             Use<CommandArgUnSafe>();
+            Use<CommandArgAutoInteractive>();
         }
 
         public static void Use<T>() where T : CommandArg, new()
@@ -91,21 +94,42 @@
         public bool? AutoFolderCreate
         {
             get => GetFlag<CommandArgAutoFolderCreate>();
+            set => Get<CommandArgAutoFolderCreate>()!.ValueFlag = value;
         }
 
         public bool? AutoFileOverwrite
         {
             get => GetFlag<CommandArgAutoFileOverwrite>();
+            set => Get<CommandArgAutoFileOverwrite>()!.ValueFlag = value;
         }
 
         public bool? AutoIdentifierIncrement
         {
             get => GetFlag<CommandArgAutoIdentifierIncrement>();
+            set => Get<CommandArgAutoIdentifierIncrement>()!.ValueFlag = value;
+        }
+
+        public bool Interactive
+        {
+            get => GetFlag<CommandArgAutoInteractive>() ?? true;
+            set => Get<CommandArgAutoInteractive>()!.ValueFlag = value;
         }
 
         public bool UnSafe
         {
             get => GetReaded<CommandArgUnSafe>();
+            set
+            {
+                if (value)
+                {
+                    var arg = Get<CommandArgUnSafe>()!;
+                    arg.TryRead(arg.ArgID);
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+            }
         }
 
         public bool GetReaded<T>() where T : CommandArg
@@ -155,17 +179,17 @@
         {
             List<string> needs = [];
 
-            if (settingsFodler && !CheckRequire<CommandArgSettingsFolder>(out var sfArg, arg => arg.ValueText == null))
+            if (settingsFodler && !CheckRequire<CommandArgSettingsFolder>(out var sfArg, arg => arg.ValueText != null))
             {
                 needs.Add($"{sfArg?.Name} ({sfArg?.ArgID})");
             }
 
-            if (targetFolder && !CheckRequire<CommandArgTargetFolder>(out var tfArg, arg => arg.ValueText == null))
+            if (targetFolder && !CheckRequire<CommandArgTargetFolder>(out var tfArg, arg => arg.ValueText != null))
             {
                 needs.Add($"{tfArg?.Name} ({tfArg?.ArgID})");
             }
 
-            if (identifier && !CheckRequire<CommandArgIdentifier>(out var idArg, arg => arg.ValueText == null))
+            if (identifier && !CheckRequire<CommandArgIdentifier>(out var idArg, arg => arg.ValueText != null))
             {
                 needs.Add($"{idArg?.Name} ({idArg?.ArgID})");
             }
@@ -181,10 +205,40 @@
             }
         }
 
-        public bool CheckRequire<T>(out T? arg, Func<T, bool> check) where T : CommandArg
+        public bool CheckRequire<T>(out T? arg, Func<T, bool>? check = null, Func<T?, T>? interactive = null) where T : CommandArg, new()
         {
             arg = Get<T>();
-            return arg != null && check(arg);
+            check ??= (arg) => true;
+            interactive ??= (arg) => InterectiveQuestionText(arg);
+
+            if (arg != null && check(arg))
+            {
+                return true;
+            }
+            else if (Interactive && interactive != null)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    if(i != 0)
+                    {
+                        Console.WriteLine($"Continue {i+1}/3");
+                    }
+                    arg = interactive(arg);
+                    if (check(arg))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public static T InterectiveQuestionText<T>(T? arg) where T : CommandArg, new()
+        {
+            arg ??= new T();
+            arg.ValueText = ConsoleUtility.QuestionText($"Input [{arg.Name} ({arg.ArgID})] value :", null);
+            return arg;
         }
 
         public CommandArgs Copy()
