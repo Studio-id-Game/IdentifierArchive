@@ -6,7 +6,7 @@
 
         public CommandArgUserName(CommandArgUserName sauce) : base(sauce) { }
 
-        public override string Name => $"-{nameof(CommandArgUserName)}";
+        public override string Name => $"--username";
 
         public override string ArgID => "-username";
 

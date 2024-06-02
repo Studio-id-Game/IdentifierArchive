@@ -10,7 +10,7 @@
 
         public override bool? ValueFlag => null;
 
-        public override string Name => "-UN-SAFE";
+        public override string Name => "--UN-SAFE";
 
         public override string ArgID => "-UN-SAFE";
 
