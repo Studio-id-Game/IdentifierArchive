@@ -6,9 +6,7 @@
 
         public CommandArg(CommandArg sauce)
         {
-            ValueText = sauce.ValueText;
-            ValueFlag = sauce.ValueFlag;
-            IsReaded = sauce.IsReaded;
+            Value = sauce.Value;
         }
 
         public abstract string Name { get; }

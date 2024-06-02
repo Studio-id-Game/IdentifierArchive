@@ -6,15 +6,15 @@
 
         static CommandArgs()
         {
-            Use<CommandArgTargetFolder>();
             Use<CommandArgSettingsFolder>();
+            Use<CommandArgTargetFolder>();
             Use<CommandArgIdentifier>();
-            Use<CommandArgUserName>();
             Use<CommandArgAutoFolderCreate>();
             Use<CommandArgAutoFileOverwrite>();
             Use<CommandArgAutoIdentifierIncrement>();
-            Use<CommandArgUnSafe>();
             Use<CommandArgAutoInteractive>();
+            Use<CommandArgUserName>();
+            Use<CommandArgUnSafe>();
         }
 
         public static void Use<T>() where T : CommandArg, new()
