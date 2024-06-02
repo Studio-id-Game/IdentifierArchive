@@ -47,7 +47,7 @@ namespace StudioIdGames.IdentifierArchiveCore
             ProcessStartInfo process_start_info = new()
             {
                 FileName = "cmd",
-                Arguments = "/c " + command,
+                Arguments = $" \"/c\" {command}",
                 CreateNoWindow = true,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
@@ -283,15 +283,15 @@ namespace StudioIdGames.IdentifierArchiveCore
 
         public static void Need(string master, string needType, params string[] needs)
         {
+            using var color = new UseConsoleColor(ConsoleColor.Red);
             if (needs.Length == 0) return;
             if (needs.Length == 1)
             {
-                
-                Console.WriteLine($"{master} needs {needs[0]} {needType}.");
+                Console.WriteLine($"{master} needs {needs[0]} {needType}.\n");
             }
             else
             {
-                Console.WriteLine($"{master} needs all the {needType}(s) {string.Join(", ", needs)}.");
+                Console.WriteLine($"{master} needs all the {needType}(s)\n\t{string.Join("\n\t", needs)}\n");
             }
         }
 

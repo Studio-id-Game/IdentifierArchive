@@ -72,12 +72,12 @@ namespace StudioIdGames.IdentifierArchiveCore.Commands
                     return -1;
                 }
 
-                Console.WriteLine($"Backup old files ({backupSettings.SafeView?.GetZipFileInfo().FullName})");
+                Console.WriteLine($"Backup old files ({backupSettings.SafeView?.ZipFolderAbsolute})");
 
                 var backupFileinfo = backupSettings.GetZipFileInfo();
                 if (backupFileinfo.Exists)
                 {
-                    backupFileinfo.Delete();
+                    ConsoleUtility.DeleteFile(backupFileinfo, [], true);
                 }
 
                 var backupExit = backupSettings.ExcuteZip();

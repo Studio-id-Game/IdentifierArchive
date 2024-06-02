@@ -46,19 +46,24 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
             return Gitignore.ToFile(FolderInfo, out var created, out _, true, false) || created;
         }
 
-        public int CreateZipFile(IdentifierFile identifier, bool? autoFileOverwrite, bool? autoIdentifierIncrement)
+        public int CreateZipFile(IdentifierFile identifier, CommandArgs args)
         {
             var settings = settingsWithOutIdentifier.GetReplaced(identifier: identifier.Text);
             var userInfo = new UserInfoFile().FromFile(settingsWithOutIdentifier.GetLocalkeyFolderInfo());
 
             if (userInfo == null) return -1;
 
+            if (!FolderSetup(args))
+            {
+                return -1;
+            }
+
             var zipFileInfo = settings.GetZipFileInfo();
             if (zipFileInfo.Exists)
             {
                 Console.WriteLine($"File is exists. ({zipFileInfo.FullName})");
 
-                if (ConsoleUtility.Question("Overwrite this file?", autoFileOverwrite))
+                if (ConsoleUtility.Question("Overwrite this file?", args.AutoFileOverwrite))
                 {
                     ConsoleUtility.DeleteFile(zipFileInfo, [], true);
                 }
@@ -77,7 +82,7 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
                         zipFileInfo = settings.GetZipFileInfo();
                     }
 
-                    if (!ConsoleUtility.Question($"Increment identifier? ({oldIdentifier} to {identifier.Text})", autoIdentifierIncrement))
+                    if (!ConsoleUtility.Question($"Increment identifier? ({oldIdentifier} to {identifier.Text})", args.AutoIdentifierIncrement))
                     {
                         return -1;
                     }

@@ -34,17 +34,20 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
                 current.Text = args.Identifier;
             }
 
-            bool res = archive.ToFile(FolderInfo, out var created, out _, autoCreate: true, autoOverwrite: args.AutoFileOverwrite) || created;
+            archive.FixIdentifier(0);
+            current.FixIdentifier(0);
+
+            bool exists = archive.ToFile(FolderInfo, out var created, out _, autoCreate: true, autoOverwrite: args.AutoFileOverwrite);
+
+            if (!exists && !created) return false;
+
+            exists = current.ToFile(FolderInfo, out created, out _, autoCreate: true, autoOverwrite: args.AutoFileOverwrite);
             
-            if (!res) return false;
+            if (!exists && !created) return false;
 
-            res = current.ToFile(FolderInfo, out created, out _, autoCreate: true, autoOverwrite: args.AutoFileOverwrite) || created;
-            
-            if (!res) return false;
+            exists = gitignore.ToFile(FolderInfo, out created, out _, autoCreate: true, autoOverwrite: args.AutoFileOverwrite);
 
-            res = gitignore.ToFile(FolderInfo, out created, out _, autoCreate: true, autoOverwrite: args.AutoFileOverwrite) || created;
-
-            if (!res) return false;
+            if (!exists && !created) return false;
 
             return true;
         }
