@@ -223,7 +223,24 @@ namespace StudioIdGames.GoogleDriveStrage
 
             FilesResource.CreateRequest req = service.Files.Create(fobj);
             req.Fields = "id, name";
-            return req.Execute();
+            var folder = req.Execute();
+
+            for (int i = 0; i < 10; i++)
+            {
+                Thread.Sleep(500);
+
+                var check = service.Files.Get(folder.Id).Execute();
+                if (check != null)
+                {
+                    return folder;
+                }
+
+                Console.WriteLine("Wait for folder creation...");
+
+                Thread.Sleep(500);
+            }
+
+            throw new TimeoutException("Folder creation timeout or  does not created");
         }
 
         private static File? GetFileWithName(DriveService service, string parentID, string parentName, string name, string addon = "")
