@@ -238,14 +238,19 @@ namespace StudioIdGames.IdentifierArchiveCore.FolderControllers
             return 0;
         }
 
-        public int DownloadZipFile(string identifier, bool? autoFileOverwrite)
+        public int DownloadZipFile(string identifier, CommandArgs args)
         {
             var settings = settingsWithOutIdentifier.GetReplaced(identifier: identifier);
 
             var zipMetaFileInfo = GetZipMetaFileInfo(identifier);
             var zipFileInfo = GetZipFileInfo(identifier);
 
-            var metaExist = ConsoleUtility.CheckFile(zipMetaFileInfo, "Zip meta", out var metaCreated, out var metaOverwrited, true, autoFileOverwrite, (info) =>
+            if (!FolderSetup(args))
+            {
+                return -1;
+            }
+
+            var metaExist = ConsoleUtility.CheckFile(zipMetaFileInfo, "Zip meta", out var metaCreated, out var metaOverwrited, true, args.AutoFileOverwrite, (info) =>
             {
                 settings.ExcuteDownload(info);
             });
